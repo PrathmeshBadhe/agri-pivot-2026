@@ -3,14 +3,15 @@ import { useAuth } from '../auth/useAuth';
 import { Button } from '../../components/ui/Button';
 import { ForecastChart } from '../prediction/ForecastChart';
 import { usePrediction } from '../prediction/usePrediction';
-import { TrendingUp, TrendingDown, Tractor, Calculator, CloudSun, Leaf, Bell, Pencil, Check } from 'lucide-react';
+import { TrendingUp, TrendingDown, Tractor, Calculator, CloudSun, Leaf, Bell, Pencil, Check, Coins } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 
 export const Dashboard = () => {
     const { user, logout, updateProfile } = useAuth();
-    const { data, isLoading, signal } = usePrediction('Onion');
+    const [selectedCrop, setSelectedCrop] = useState('Onion');
+    const { data: chartData, isLoading: isChartLoading, signal, color } = usePrediction(selectedCrop);
 
     // Profile Editing State
     const [isEditing, setIsEditing] = useState(false);
@@ -36,41 +37,47 @@ export const Dashboard = () => {
 
             {/* Header */}
             <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
-                <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <Leaf className="w-6 h-6 text-emerald-600" />
-                        <h1 className="text-lg font-bold text-slate-900 tracking-tight">Agri-Pivot</h1>
+                        <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold">
+                            AP
+                        </div>
+                        <span className="font-bold text-slate-800 text-lg tracking-tight">Agri-Pivot AI</span>
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <button className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors">
+                        <button className="relative p-2 text-slate-400 hover:bg-slate-50 rounded-full transition-colors">
                             <Bell className="w-5 h-5" />
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-amber-500 rounded-full border-2 border-white"></span>
+                            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
                         </button>
-                        <div className="hidden md:flex items-center gap-3 pl-4 border-l border-slate-100">
-                            <div className="text-right">
+
+                        <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
+                            <div className="text-right hidden md:block group">
                                 {isEditing ? (
                                     <div className="flex items-center gap-2">
                                         <input
-                                            autoFocus
+                                            type="text"
                                             value={tempName}
                                             onChange={(e) => setTempName(e.target.value)}
-                                            className="text-sm font-medium text-slate-900 border-b border-emerald-500 focus:outline-none w-32 px-1"
+                                            className="px-2 py-1 text-sm border border-emerald-300 rounded focus:outline-none focus:ring-1 focus:ring-emerald-500 w-32"
+                                            autoFocus
                                         />
-                                        <button onClick={handleSaveProfile} className="text-emerald-600 hover:text-emerald-700 p-1 bg-emerald-50 rounded-full">
-                                            <Check className="w-3 h-3" />
+                                        <button onClick={handleSaveProfile} className="p-1 text-emerald-600 hover:bg-emerald-50 rounded">
+                                            <Check className="w-4 h-4" />
                                         </button>
                                     </div>
                                 ) : (
-                                    <div className="flex items-center gap-2 group cursor-pointer" onClick={() => setIsEditing(true)}>
-                                        <p className="text-sm font-medium text-slate-900">{user?.full_name || 'Farmer'}</p>
-                                        <Pencil className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="flex items-center gap-2">
+                                        <p className="text-sm font-bold text-slate-800">{user?.full_name || 'Agri-User'}</p>
+                                        <button onClick={() => setIsEditing(true)} className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-slate-400 hover:text-emerald-600">
+                                            <Pencil className="w-3 h-3" />
+                                        </button>
                                     </div>
                                 )}
-                                <p className="text-xs text-slate-500 capitalize">{user?.role || 'Guest'}</p>
+                                <p className="text-xs text-slate-500">Farmer • Premium</p>
                             </div>
-                            <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold border border-emerald-200">
-                                {user?.full_name?.[0] || 'U'}
+                            <div className="w-10 h-10 bg-slate-100 rounded-full border border-slate-200 flex items-center justify-center font-bold text-emerald-700">
+                                {user?.full_name ? user.full_name[0] : 'U'}
                             </div>
                         </div>
                         <Button variant="ghost" size="sm" onClick={logout} className="text-red-500 hover:bg-red-50 hover:text-red-600">
@@ -80,131 +87,137 @@ export const Dashboard = () => {
                 </div>
             </header>
 
-            <main className="max-w-7xl mx-auto p-4 lg:p-8 space-y-6">
-                <div className="flex justify-between items-end">
-                    <div>
-                        <h2 className="text-2xl font-bold text-slate-900">Command Center</h2>
-                        <p className="text-slate-500">Live market intelligence for your district.</p>
-                    </div>
-                    <div className="hidden md:block">
-                        <span className="bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider animate-pulse">
-                            Live Connection
-                        </span>
-                    </div>
+            <main className="max-w-7xl mx-auto px-4 lg:px-6 py-8">
+                {/* Hero Section */}
+                <div className="mb-8">
+                    <h1 className="text-2xl font-bold text-slate-900">Welcome back, {user?.full_name?.split(' ')[0] || 'Farmer'}! 🌾</h1>
+                    <p className="text-slate-500">Here's your mandi forecast for today.</p>
                 </div>
 
-                {/* Bento Grid Layout */}
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Main Chart Section */}
+                    <div className="col-span-1 lg:col-span-2 space-y-6">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            viewport={{ once: true }}
+                            className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100"
+                        >
+                            <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
+                                <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                    <TrendingUp className="w-5 h-5 text-emerald-600" />
+                                    Price Forecast
+                                </h2>
 
-                    {/* Widget 1: The Signal (Hero) */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="col-span-1 md:col-span-2 lg:col-span-2 bg-slate-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden group"
-                    >
-                        <div className="absolute top-0 right-0 p-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all duration-700"></div>
-                        <div className="relative z-10 flex items-center justify-between h-full">
-                            <div>
-                                <h3 className="text-slate-400 uppercase text-xs font-bold tracking-widest mb-2">AI Recommendation</h3>
-                                <div className="text-4xl md:text-5xl font-bold mb-2 flex items-center gap-3">
-                                    {signal === 'sell' ? (
-                                        <>
-                                            <span className="text-emerald-400">SELL NOW</span>
-                                            <TrendingUp className="w-10 h-10 text-emerald-500" />
-                                        </>
-                                    ) : (
-                                        <>
-                                            <span className="text-amber-400">HOLD</span>
-                                            <TrendingDown className="w-10 h-10 text-amber-500" />
-                                        </>
-                                    )}
+                                <div className="flex bg-slate-100 p-1 rounded-xl">
+                                    {['Onion', 'Tomato', 'Potato'].map(c => (
+                                        <button
+                                            key={c}
+                                            onClick={() => setSelectedCrop(c)}
+                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedCrop === c ? 'bg-white shadow text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                                        >
+                                            {c}
+                                        </button>
+                                    ))}
                                 </div>
-                                <p className="text-slate-300 max-w-sm">
-                                    Prices are projected to peak in <b>4 days</b> based on historical mandi patterns.
+                            </div>
+
+                            <ForecastChart data={chartData} isLoading={isChartLoading} color={color} />
+                        </motion.div>
+                    </div>
+
+                    {/* Right Column: Widgets */}
+                    <div className="col-span-1 space-y-6">
+                        {/* Widget 1: AI Signal */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="bg-slate-900 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden"
+                        >
+                            <div className="relative z-10">
+                                <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">AI Signal ({selectedCrop})</p>
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-3xl font-bold">{signal === 'buy' ? 'BUY NOW' : signal === 'sell' ? 'SELL NOW' : 'HOLD'}</h3>
+                                    {signal === 'buy' ?
+                                        <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center animate-pulse"><TrendingUp className="w-6 h-6" /></div> :
+                                        signal === 'sell' ?
+                                            <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center animate-pulse"><TrendingDown className="w-6 h-6" /></div> :
+                                            <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center"><Coins className="w-6 h-6" /></div>
+                                    }
+                                </div>
+                                <p className="text-slate-400 text-sm mt-4">
+                                    {signal === 'buy' && `Market is bottoming out at ₹${chartData[chartData.length - 1]?.price.toFixed(0)}. Good time to stock.`}
+                                    {signal === 'sell' && `Prices are peaking at ₹${chartData[chartData.length - 1]?.price.toFixed(0)}. Capture profit now.`}
+                                    {signal === 'hold' && `Market trend is uncertain. Wait for clearer signals.`}
                                 </p>
                             </div>
-                            {/* Traffic Light Visual */}
-                            <div className="hidden md:flex flex-col gap-3 bg-slate-800 p-3 rounded-full border border-slate-700">
-                                <div className={`w-12 h-12 rounded-full ${signal === 'sell' ? 'bg-red-500/20' : 'bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.6)]'}`}></div>
-                                <div className={`w-12 h-12 rounded-full ${signal === 'hold' ? 'bg-amber-500/20' : 'bg-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.6)]'}`}></div>
-                                <div className={`w-12 h-12 rounded-full ${signal === 'buy' ? 'bg-emerald-500/20' : 'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.6)]'}`}></div>
-                            </div>
-                        </div>
-                    </motion.div>
+                        </motion.div>
 
-                    {/* Widget 2: Market Ticker / Stats */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        viewport={{ once: true }}
-                        className="col-span-1 md:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow"
-                    >
-                        <div>
-                            <h3 className="text-slate-500 text-xs font-bold uppercase mb-4">Market Pulse (Pune)</h3>
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-center pb-3 border-b border-slate-50">
-                                    <span className="font-medium text-slate-700">Onion</span>
-                                    <span className="font-bold text-slate-900">₹2,400/q</span>
-                                </div>
-                                <div className="flex justify-between items-center pb-3 border-b border-slate-50">
-                                    <span className="font-medium text-slate-700">Potato</span>
-                                    <span className="font-bold text-slate-900">₹1,800/q</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="font-medium text-slate-700">Tomato</span>
-                                    <span className="font-bold text-slate-900">₹3,200/q</span>
+                        {/* Widget 2: Market Ticker / Stats */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            viewport={{ once: true }}
+                            className="col-span-1 md:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow"
+                        >
+                            <div>
+                                <h3 className="text-slate-500 text-xs font-bold uppercase mb-4">Market Pulse (Pune)</h3>
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-center pb-3 border-b border-slate-50">
+                                        <span className="font-medium text-slate-700">Onion</span>
+                                        <span className="font-bold text-slate-900">₹2,400/q</span>
+                                    </div>
+                                    <div className="flex justify-between items-center pb-3 border-b border-slate-50">
+                                        <span className="font-medium text-slate-700">Potato</span>
+                                        <span className="font-bold text-slate-900">₹1,800/q</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="font-medium text-slate-700">Tomato</span>
+                                        <span className="font-bold text-slate-900">₹3,200/q</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <Link to="/markets">
-                            <Button variant="outline" size="sm" className="w-full mt-4 text-xs group">
-                                View All Mandis
-                                <span className="ml-1 inline-block transition-transform group-hover:translate-x-1">→</span>
-                            </Button>
-                        </Link>
-                    </motion.div>
-
-                    {/* Widget 3: Quick Tools */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        viewport={{ once: true }}
-                        className="col-span-1 bg-emerald-50 p-6 rounded-2xl border border-emerald-100"
-                    >
-                        <h3 className="text-emerald-800 text-xs font-bold uppercase mb-4">Quick Tools</h3>
-                        <div className="grid grid-cols-2 gap-3">
-                            <Link to="/calculator" className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
-                                <Calculator className="w-5 h-5 mb-1" />
-                                <span className="text-[10px] font-bold">Profit Calc</span>
+                            <Link to="/markets">
+                                <Button variant="outline" size="sm" className="w-full mt-4 text-xs group">
+                                    View All Mandis
+                                    <span className="ml-1 inline-block transition-transform group-hover:translate-x-1">→</span>
+                                </Button>
                             </Link>
-                            <Link to="/logistics" className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
-                                <Tractor className="w-5 h-5 mb-1" />
-                                <span className="text-[10px] font-bold">Logistics</span>
-                            </Link>
-                            <Link to="/weather" className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
-                                <CloudSun className="w-5 h-5 mb-1" />
-                                <span className="text-[10px] font-bold">Weather</span>
-                            </Link>
-                            <button onClick={() => toast('Crop Doctor AI coming soon!', { icon: '🤖' })} className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
-                                <Leaf className="w-5 h-5 mb-1" />
-                                <span className="text-[10px] font-bold">Crop Doc</span>
-                            </button>
-                        </div>
-                    </motion.div>
+                        </motion.div>
 
-                    {/* Widget 4: The Brain (Forecast Chart) */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        className="col-span-1 md:col-span-3 lg:col-span-4 rounded-2xl overflow-hidden will-change-transform"
-                    >
-                        <ForecastChart data={data} isLoading={isLoading} />
-                    </motion.div>
+                        {/* Widget 3: Quick Tools */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            viewport={{ once: true }}
+                            className="col-span-1 bg-emerald-50 p-6 rounded-2xl border border-emerald-100"
+                        >
+                            <h3 className="text-emerald-800 text-xs font-bold uppercase mb-4">Quick Tools</h3>
+                            <div className="grid grid-cols-2 gap-3">
+                                <Link to="/calculator" className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
+                                    <Calculator className="w-5 h-5 mb-1" />
+                                    <span className="text-[10px] font-bold">Profit Calc</span>
+                                </Link>
+                                <Link to="/logistics" className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
+                                    <Tractor className="w-5 h-5 mb-1" />
+                                    <span className="text-[10px] font-bold">Logistics</span>
+                                </Link>
+                                <Link to="/weather" className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
+                                    <CloudSun className="w-5 h-5 mb-1" />
+                                    <span className="text-[10px] font-bold">Weather</span>
+                                </Link>
+                                <button onClick={() => toast('Crop Doctor AI coming soon!', { icon: '🤖' })} className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
+                                    <Leaf className="w-5 h-5 mb-1" />
+                                    <span className="text-[10px] font-bold">Crop Doc</span>
+                                </button>
+                            </div>
+                        </motion.div>
 
+                    </div>
                 </div>
             </main>
         </div>

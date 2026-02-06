@@ -1,50 +1,99 @@
 import { useState, useEffect } from 'react';
 
-
 export interface PredictionPoint {
     date: string;
     price: number;
+    type: 'history' | 'forecast';
     yhat_lower?: number;
     yhat_upper?: number;
-    type: 'history' | 'forecast';
 }
 
-export const usePrediction = (commodity: string) => {
+// Mock Data Generators
+const generateData = (basePrice: number, volatility: number) => {
+    const today = new Date();
+    const data: PredictionPoint[] = [];
+
+    // 30 days history
+    for (let i = 30; i > 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        data.push({
+            date: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+            price: basePrice + Math.random() * volatility * 2 - volatility,
+            type: 'history'
+        });
+    }
+
+    // 14 days forecast
+    let lastPrice = data[data.length - 1].price;
+    for (let i = 1; i <= 14; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + i);
+        const trend = Math.random() > 0.4 ? 1 : -1; // Slight upward bias logic could be here
+        lastPrice = lastPrice + (Math.random() * volatility * 1.5 * trend);
+
+        data.push({
+            date: d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+            price: lastPrice,
+            type: 'forecast',
+            yhat_lower: lastPrice - volatility,
+            yhat_upper: lastPrice + volatility
+        });
+    }
+    return data;
+};
+
+export const usePrediction = (cropId: string) => {
     const [data, setData] = useState<PredictionPoint[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [signal, setSignal] = useState<'buy' | 'sell' | 'hold'>('hold');
+    const [color, setColor] = useState('#059669'); // Default Emerald
 
     useEffect(() => {
-        const loadData = async () => {
-            setIsLoading(true);
-            // Simulate API latency
-            await new Promise(resolve => setTimeout(resolve, 600));
+        setIsLoading(true);
+        // Simulate API delay
+        const timer = setTimeout(() => {
+            let basePrice = 2400;
+            let volatility = 100;
+            let themeColor = '#059669'; // Emerald
+            let computedSignal: 'buy' | 'sell' | 'hold' = 'hold';
 
-            // Robust Mock Data conforming to the Recharts structure requested
-            const mockData: PredictionPoint[] = [
-                // History (Solid Line)
-                { date: '2-01', price: 2400, type: 'history' },
-                { date: '2-02', price: 2420, type: 'history' },
-                { date: '2-03', price: 2380, type: 'history' },
-                { date: '2-04', price: 2450, type: 'history' },
-                { date: '2-05', price: 2480, type: 'history' },
-                { date: '2-06', price: 2500, type: 'history' },
-                // Forecast (Dotted Line + Confidence)
-                { date: '2-07', price: 2550, yhat_lower: 2500, yhat_upper: 2600, type: 'forecast' },
-                { date: '2-08', price: 2600, yhat_lower: 2540, yhat_upper: 2660, type: 'forecast' },
-                { date: '2-09', price: 2650, yhat_lower: 2580, yhat_upper: 2720, type: 'forecast' },
-                { date: '2-10', price: 2700, yhat_lower: 2600, yhat_upper: 2800, type: 'forecast' },
-                { date: '2-11', price: 2680, yhat_lower: 2550, yhat_upper: 2810, type: 'forecast' },
-                { date: '2-12', price: 2720, yhat_lower: 2600, yhat_upper: 2840, type: 'forecast' },
-            ];
+            // Crop-specific configurations
+            switch (cropId.toLowerCase()) {
+                case 'tomato':
+                    basePrice = 3200;
+                    volatility = 300; // High volatility
+                    themeColor = '#dc2626'; // Red
+                    computedSignal = 'sell';
+                    break;
+                case 'potato':
+                    basePrice = 1800;
+                    volatility = 50; // Low volatility
+                    themeColor = '#d97706'; // Amber/Gold
+                    computedSignal = 'buy';
+                    break;
+                case 'soybean':
+                    basePrice = 4500;
+                    volatility = 150;
+                    themeColor = '#d97706';
+                    computedSignal = 'hold';
+                    break;
+                default: // Onion
+                    basePrice = 2400;
+                    volatility = 100;
+                    themeColor = '#059669';
+                    computedSignal = 'sell';
+                    break;
+            }
 
-            setData(mockData);
-            setSignal('sell'); // Strong uptrend -> Sell Signal
+            setColor(themeColor);
+            setSignal(computedSignal);
+            setData(generateData(basePrice, volatility));
             setIsLoading(false);
-        };
+        }, 800);
 
-        loadData();
-    }, [commodity]);
+        return () => clearTimeout(timer);
+    }, [cropId]);
 
-    return { data, isLoading, signal };
+    return { data, isLoading, signal, color };
 };
