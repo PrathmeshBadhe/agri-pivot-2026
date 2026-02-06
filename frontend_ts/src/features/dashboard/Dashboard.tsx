@@ -1,17 +1,71 @@
+import { useState, useEffect } from 'react';
 import { useAuth } from '../auth/useAuth';
 import { Button } from '../../components/ui/Button';
 import { ForecastChart } from '../prediction/ForecastChart';
 import { usePrediction } from '../prediction/usePrediction';
-import { TrendingUp, TrendingDown, Tractor, Calculator, CloudSun, Leaf, Bell } from 'lucide-react';
+import { TrendingUp, TrendingDown, Tractor, Calculator, CloudSun, Leaf, Bell, Pencil, Check, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 export const Dashboard = () => {
-    const { user, logout } = useAuth();
+    const { user, logout, updateProfile } = useAuth();
     const { data, isLoading, signal } = usePrediction('Onion');
 
+    // Profile Editing State
+    const [isEditing, setIsEditing] = useState(false);
+    const [tempName, setTempName] = useState(user?.full_name || '');
+
+    // Modal State
+    const [showLogisticsModal, setShowLogisticsModal] = useState(false);
+
+    // Sync temp name when user loads
+    useEffect(() => {
+        if (user?.full_name) setTempName(user.full_name);
+    }, [user]);
+
+    const handleSaveProfile = () => {
+        if (tempName.trim()) {
+            updateProfile(tempName);
+            setIsEditing(false);
+            toast.success('Profile Updated Successfully');
+        } else {
+            toast.error('Name cannot be empty');
+        }
+    };
+
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-slate-50 relative">
+            {/* Logistics Modal */}
+            <AnimatePresence>
+                {showLogisticsModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl"
+                        >
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-xl font-bold text-slate-900">Transport Pool</h3>
+                                <button onClick={() => setShowLogisticsModal(false)} className="text-slate-400 hover:text-slate-600">
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+                            <div className="bg-emerald-50 text-emerald-800 p-4 rounded-xl mb-4 text-sm font-medium">
+                                🚚 Feature Coming Soon
+                            </div>
+                            <p className="text-slate-600 mb-6 text-sm">
+                                Soon you will be able to pool trucks with other farmers in Pune district to save 30% on transport costs.
+                            </p>
+                            <Button className="w-full" onClick={() => setShowLogisticsModal(false)}>Got it</Button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
             {/* Header */}
-            <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
+            <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <Leaf className="w-6 h-6 text-emerald-600" />
@@ -25,7 +79,24 @@ export const Dashboard = () => {
                         </button>
                         <div className="hidden md:flex items-center gap-3 pl-4 border-l border-slate-100">
                             <div className="text-right">
-                                <p className="text-sm font-medium text-slate-900">{user?.full_name || 'Farmer'}</p>
+                                {isEditing ? (
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            autoFocus
+                                            value={tempName}
+                                            onChange={(e) => setTempName(e.target.value)}
+                                            className="text-sm font-medium text-slate-900 border-b border-emerald-500 focus:outline-none w-32 px-1"
+                                        />
+                                        <button onClick={handleSaveProfile} className="text-emerald-600 hover:text-emerald-700 p-1 bg-emerald-50 rounded-full">
+                                            <Check className="w-3 h-3" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2 group cursor-pointer" onClick={() => setIsEditing(true)}>
+                                        <p className="text-sm font-medium text-slate-900">{user?.full_name || 'Farmer'}</p>
+                                        <Pencil className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </div>
+                                )}
                                 <p className="text-xs text-slate-500 capitalize">{user?.role || 'Guest'}</p>
                             </div>
                             <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold border border-emerald-200">
@@ -46,7 +117,7 @@ export const Dashboard = () => {
                         <p className="text-slate-500">Live market intelligence for your district.</p>
                     </div>
                     <div className="hidden md:block">
-                        <span className="bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+                        <span className="bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider animate-pulse">
                             Live Connection
                         </span>
                     </div>
@@ -56,8 +127,13 @@ export const Dashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
                     {/* Widget 1: The Signal (Hero) */}
-                    <div className="col-span-1 md:col-span-2 lg:col-span-2 bg-slate-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="col-span-1 md:col-span-2 lg:col-span-2 bg-slate-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden group"
+                    >
+                        <div className="absolute top-0 right-0 p-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all duration-700"></div>
                         <div className="relative z-10 flex items-center justify-between h-full">
                             <div>
                                 <h3 className="text-slate-400 uppercase text-xs font-bold tracking-widest mb-2">AI Recommendation</h3>
@@ -85,10 +161,16 @@ export const Dashboard = () => {
                                 <div className={`w-12 h-12 rounded-full ${signal === 'buy' ? 'bg-emerald-500/20' : 'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.6)]'}`}></div>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Widget 2: Market Ticker / Stats */}
-                    <div className="col-span-1 md:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        viewport={{ once: true }}
+                        className="col-span-1 md:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow"
+                    >
                         <div>
                             <h3 className="text-slate-500 text-xs font-bold uppercase mb-4">Market Pulse (Pune)</h3>
                             <div className="space-y-4">
@@ -106,36 +188,50 @@ export const Dashboard = () => {
                                 </div>
                             </div>
                         </div>
-                        <Button variant="outline" size="sm" className="w-full mt-4 text-xs">View All Mandis</Button>
-                    </div>
+                        <Button variant="outline" size="sm" className="w-full mt-4 text-xs group">
+                            View All Mandis
+                            <span className="ml-1 inline-block transition-transform group-hover:translate-x-1">→</span>
+                        </Button>
+                    </motion.div>
 
                     {/* Widget 3: Quick Tools */}
-                    <div className="col-span-1 bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        viewport={{ once: true }}
+                        className="col-span-1 bg-emerald-50 p-6 rounded-2xl border border-emerald-100"
+                    >
                         <h3 className="text-emerald-800 text-xs font-bold uppercase mb-4">Quick Tools</h3>
                         <div className="grid grid-cols-2 gap-3">
-                            <button className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all text-emerald-700">
+                            <Link to="/calculator" className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
                                 <Calculator className="w-5 h-5 mb-1" />
                                 <span className="text-[10px] font-bold">Profit Calc</span>
-                            </button>
-                            <button className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all text-emerald-700">
+                            </Link>
+                            <button onClick={() => setShowLogisticsModal(true)} className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
                                 <Tractor className="w-5 h-5 mb-1" />
                                 <span className="text-[10px] font-bold">Logistics</span>
                             </button>
-                            <button className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all text-emerald-700">
+                            <Link to="/weather" className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
                                 <CloudSun className="w-5 h-5 mb-1" />
                                 <span className="text-[10px] font-bold">Weather</span>
-                            </button>
-                            <button className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all text-emerald-700">
+                            </Link>
+                            <button onClick={() => toast('Crop Doctor AI coming soon!', { icon: '🤖' })} className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
                                 <Leaf className="w-5 h-5 mb-1" />
                                 <span className="text-[10px] font-bold">Crop Doc</span>
                             </button>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Widget 4: The Brain (Forecast Chart) */}
-                    <div className="col-span-1 md:col-span-3 lg:col-span-4 rounded-2xl overflow-hidden">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        className="col-span-1 md:col-span-3 lg:col-span-4 rounded-2xl overflow-hidden will-change-transform"
+                    >
                         <ForecastChart data={data} isLoading={isLoading} />
-                    </div>
+                    </motion.div>
 
                 </div>
             </main>
