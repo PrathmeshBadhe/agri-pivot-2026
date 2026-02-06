@@ -98,63 +98,63 @@ export const Dashboard = () => {
                 <div className="mb-8">
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         <Link to="/calculator" className="contents">
-                            <motion.button
+                            <motion.div
                                 whileHover={{ scale: 1.03 }}
                                 whileTap={{ scale: 0.96 }}
                                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                                className="relative h-28 w-full flex items-center px-6 gap-4 bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl overflow-hidden group hover:bg-white/80 transition-colors"
+                                className="relative h-28 w-full flex items-center px-6 gap-4 bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl overflow-hidden group hover:bg-white/80 transition-colors cursor-pointer"
                             >
                                 <div className="p-3.5 rounded-2xl bg-emerald-100 text-emerald-600 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                                     <Calculator className="w-7 h-7" />
                                 </div>
                                 <span className="text-lg font-bold text-slate-800 tracking-tight text-left leading-tight">Profit<br />Calculator</span>
                                 <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl" />
-                            </motion.button>
+                            </motion.div>
                         </Link>
 
                         <Link to="/logistics" className="contents">
-                            <motion.button
+                            <motion.div
                                 whileHover={{ scale: 1.03 }}
                                 whileTap={{ scale: 0.96 }}
                                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                                className="relative h-28 w-full flex items-center px-6 gap-4 bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl overflow-hidden group hover:bg-white/80 transition-colors"
+                                className="relative h-28 w-full flex items-center px-6 gap-4 bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl overflow-hidden group hover:bg-white/80 transition-colors cursor-pointer"
                             >
                                 <div className="p-3.5 rounded-2xl bg-indigo-100 text-indigo-600 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                                     <Tractor className="w-7 h-7" />
                                 </div>
                                 <span className="text-lg font-bold text-slate-800 tracking-tight text-left leading-tight">Logistics<br />Hub</span>
                                 <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl" />
-                            </motion.button>
+                            </motion.div>
                         </Link>
 
                         <Link to="/weather" className="contents">
-                            <motion.button
+                            <motion.div
                                 whileHover={{ scale: 1.03 }}
                                 whileTap={{ scale: 0.96 }}
                                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                                className="relative h-28 w-full flex items-center px-6 gap-4 bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl overflow-hidden group hover:bg-white/80 transition-colors"
+                                className="relative h-28 w-full flex items-center px-6 gap-4 bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl overflow-hidden group hover:bg-white/80 transition-colors cursor-pointer"
                             >
                                 <div className="p-3.5 rounded-2xl bg-sky-100 text-sky-600 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                                     <CloudSun className="w-7 h-7" />
                                 </div>
                                 <span className="text-lg font-bold text-slate-800 tracking-tight text-left leading-tight">Weather<br />Forecast</span>
                                 <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-sky-500/10 rounded-full blur-2xl" />
-                            </motion.button>
+                            </motion.div>
                         </Link>
 
-                        <motion.button
+                        <motion.div
                             onClick={() => toast('Crop Doctor AI coming soon!', { icon: '🤖' })}
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.96 }}
                             transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                            className="relative h-28 w-full flex items-center px-6 gap-4 bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl overflow-hidden group hover:bg-white/80 transition-colors"
+                            className="relative h-28 w-full flex items-center px-6 gap-4 bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl overflow-hidden group hover:bg-white/80 transition-colors cursor-pointer"
                         >
                             <div className="p-3.5 rounded-2xl bg-amber-100 text-amber-600 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                                 <Leaf className="w-7 h-7" />
                             </div>
                             <span className="text-lg font-bold text-slate-800 tracking-tight text-left leading-tight">Crop<br />Doctor</span>
                             <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl" />
-                        </motion.button>
+                        </motion.div>
                     </div>
                 </div>
 
