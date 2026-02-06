@@ -90,8 +90,72 @@ export const Dashboard = () => {
             <main className="max-w-7xl mx-auto px-4 lg:px-6 py-8">
                 {/* Hero Section */}
                 <div className="mb-8">
-                    <h1 className="text-2xl font-bold text-slate-900">Welcome back, {user?.full_name?.split(' ')[0] || 'Farmer'}! 🌾</h1>
-                    <p className="text-slate-500">Here's your mandi forecast for today.</p>
+                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">Welcome back, {user?.full_name?.split(' ')[0] || 'Farmer'}! 🌾</h1>
+                    <p className="text-slate-500 font-medium">Here's your mandi forecast for today.</p>
+                </div>
+
+                {/* Control Center (Quick Actions) */}
+                <div className="mb-8">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <Link to="/calculator" className="contents">
+                            <motion.button
+                                whileHover={{ scale: 1.03 }}
+                                whileTap={{ scale: 0.96 }}
+                                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                className="relative h-28 w-full flex items-center px-6 gap-4 bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl overflow-hidden group hover:bg-white/80 transition-colors"
+                            >
+                                <div className="p-3.5 rounded-2xl bg-emerald-100 text-emerald-600 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                                    <Calculator className="w-7 h-7" />
+                                </div>
+                                <span className="text-lg font-bold text-slate-800 tracking-tight text-left leading-tight">Profit<br />Calculator</span>
+                                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl" />
+                            </motion.button>
+                        </Link>
+
+                        <Link to="/logistics" className="contents">
+                            <motion.button
+                                whileHover={{ scale: 1.03 }}
+                                whileTap={{ scale: 0.96 }}
+                                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                className="relative h-28 w-full flex items-center px-6 gap-4 bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl overflow-hidden group hover:bg-white/80 transition-colors"
+                            >
+                                <div className="p-3.5 rounded-2xl bg-indigo-100 text-indigo-600 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                                    <Tractor className="w-7 h-7" />
+                                </div>
+                                <span className="text-lg font-bold text-slate-800 tracking-tight text-left leading-tight">Logistics<br />Hub</span>
+                                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl" />
+                            </motion.button>
+                        </Link>
+
+                        <Link to="/weather" className="contents">
+                            <motion.button
+                                whileHover={{ scale: 1.03 }}
+                                whileTap={{ scale: 0.96 }}
+                                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                className="relative h-28 w-full flex items-center px-6 gap-4 bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl overflow-hidden group hover:bg-white/80 transition-colors"
+                            >
+                                <div className="p-3.5 rounded-2xl bg-sky-100 text-sky-600 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                                    <CloudSun className="w-7 h-7" />
+                                </div>
+                                <span className="text-lg font-bold text-slate-800 tracking-tight text-left leading-tight">Weather<br />Forecast</span>
+                                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-sky-500/10 rounded-full blur-2xl" />
+                            </motion.button>
+                        </Link>
+
+                        <motion.button
+                            onClick={() => toast('Crop Doctor AI coming soon!', { icon: '🤖' })}
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.96 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                            className="relative h-28 w-full flex items-center px-6 gap-4 bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl overflow-hidden group hover:bg-white/80 transition-colors"
+                        >
+                            <div className="p-3.5 rounded-2xl bg-amber-100 text-amber-600 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                                <Leaf className="w-7 h-7" />
+                            </div>
+                            <span className="text-lg font-bold text-slate-800 tracking-tight text-left leading-tight">Crop<br />Doctor</span>
+                            <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl" />
+                        </motion.button>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -102,7 +166,7 @@ export const Dashboard = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
                             viewport={{ once: true }}
-                            className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100"
+                            className="glass-panel p-6 rounded-3xl"
                         >
                             <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
                                 <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -134,17 +198,17 @@ export const Dashboard = () => {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="bg-slate-900 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden"
+                            className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl relative overflow-hidden"
                         >
                             <div className="relative z-10">
                                 <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">AI Signal ({selectedCrop})</p>
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-3xl font-bold">{signal === 'buy' ? 'BUY NOW' : signal === 'sell' ? 'SELL NOW' : 'HOLD'}</h3>
                                     {signal === 'buy' ?
-                                        <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center animate-pulse"><TrendingUp className="w-6 h-6" /></div> :
+                                        <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center animate-pulse drop-shadow-[0_0_15px_rgba(16,185,129,0.6)] shadow-emerald-500/50"><TrendingUp className="w-6 h-6" /></div> :
                                         signal === 'sell' ?
-                                            <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center animate-pulse"><TrendingDown className="w-6 h-6" /></div> :
-                                            <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center"><Coins className="w-6 h-6" /></div>
+                                            <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center animate-pulse drop-shadow-[0_0_15px_rgba(239,68,68,0.6)] shadow-red-500/50"><TrendingDown className="w-6 h-6" /></div> :
+                                            <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center shadow-amber-500/50"><Coins className="w-6 h-6" /></div>
                                     }
                                 </div>
                                 <p className="text-slate-400 text-sm mt-4">
@@ -161,20 +225,20 @@ export const Dashboard = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
                             viewport={{ once: true }}
-                            className="col-span-1 md:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow"
+                            className="col-span-1 md:col-span-1 glass-panel p-6 rounded-3xl flex flex-col justify-between hover:shadow-xl transition-shadow"
                         >
                             <div>
                                 <h3 className="text-slate-500 text-xs font-bold uppercase mb-4">Market Pulse (Pune)</h3>
-                                <div className="space-y-4">
-                                    <div className="flex justify-between items-center pb-3 border-b border-slate-50">
+                                <div className="space-y-[1px] bg-slate-100 rounded-2xl overflow-hidden border border-slate-200/50">
+                                    <div className="flex justify-between items-center p-3 bg-white hover:bg-slate-50 transition-colors">
                                         <span className="font-medium text-slate-700">Onion</span>
                                         <span className="font-bold text-slate-900">₹2,400/q</span>
                                     </div>
-                                    <div className="flex justify-between items-center pb-3 border-b border-slate-50">
+                                    <div className="flex justify-between items-center p-3 bg-white hover:bg-slate-50 transition-colors">
                                         <span className="font-medium text-slate-700">Potato</span>
                                         <span className="font-bold text-slate-900">₹1,800/q</span>
                                     </div>
-                                    <div className="flex justify-between items-center">
+                                    <div className="flex justify-between items-center p-3 bg-white hover:bg-slate-50 transition-colors">
                                         <span className="font-medium text-slate-700">Tomato</span>
                                         <span className="font-bold text-slate-900">₹3,200/q</span>
                                     </div>
@@ -188,92 +252,7 @@ export const Dashboard = () => {
                             </Link>
                         </motion.div>
 
-                        {/* Widget 3: Quick Tools (Redesigned) */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            viewport={{ once: true }}
-                            className="col-span-1 bg-white/60 backdrop-blur-xl p-8 rounded-3xl border border-white/50 shadow-xl"
-                        >
-                            <h3 className="text-slate-800 text-sm font-bold uppercase tracking-widest mb-6 opacity-70">Quick Actions</h3>
-                            <div className="grid grid-cols-2 gap-4">
-                                <Link to="/calculator" className="contents">
-                                    <motion.button
-                                        whileHover={{ scale: 1.05, y: -5 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                                        className="h-32 flex flex-col items-center justify-center p-4 bg-gradient-to-br from-white to-emerald-50 rounded-2xl border border-white/60 shadow-lg hover:shadow-2xl transition-shadow group relative overflow-hidden"
-                                    >
-                                        <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 rounded-full -mr-8 -mt-8 blur-xl"></div>
-                                        <motion.div
-                                            whileHover={{ rotate: [0, -10, 10, 0] }}
-                                            transition={{ duration: 0.5 }}
-                                            className="mb-3 p-3 bg-emerald-100 rounded-xl text-emerald-600"
-                                        >
-                                            <Calculator className="w-8 h-8" />
-                                        </motion.div>
-                                        <span className="text-lg font-bold text-slate-800">Profit Calc</span>
-                                    </motion.button>
-                                </Link>
 
-                                <Link to="/logistics" className="contents">
-                                    <motion.button
-                                        whileHover={{ scale: 1.05, y: -5 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                                        className="h-32 flex flex-col items-center justify-center p-4 bg-gradient-to-br from-white to-indigo-50 rounded-2xl border border-white/60 shadow-lg hover:shadow-2xl transition-shadow group relative overflow-hidden"
-                                    >
-                                        <div className="absolute top-0 right-0 w-16 h-16 bg-indigo-500/10 rounded-full -mr-8 -mt-8 blur-xl"></div>
-                                        <motion.div
-                                            whileHover={{ rotate: [0, -10, 10, 0] }}
-                                            transition={{ duration: 0.5 }}
-                                            className="mb-3 p-3 bg-indigo-100 rounded-xl text-indigo-600"
-                                        >
-                                            <Tractor className="w-8 h-8" />
-                                        </motion.div>
-                                        <span className="text-lg font-bold text-slate-800">Logistics</span>
-                                    </motion.button>
-                                </Link>
-
-                                <Link to="/weather" className="contents">
-                                    <motion.button
-                                        whileHover={{ scale: 1.05, y: -5 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                                        className="h-32 flex flex-col items-center justify-center p-4 bg-gradient-to-br from-white to-sky-50 rounded-2xl border border-white/60 shadow-lg hover:shadow-2xl transition-shadow group relative overflow-hidden"
-                                    >
-                                        <div className="absolute top-0 right-0 w-16 h-16 bg-sky-500/10 rounded-full -mr-8 -mt-8 blur-xl"></div>
-                                        <motion.div
-                                            whileHover={{ rotate: [0, -10, 10, 0] }}
-                                            transition={{ duration: 0.5 }}
-                                            className="mb-3 p-3 bg-sky-100 rounded-xl text-sky-600"
-                                        >
-                                            <CloudSun className="w-8 h-8" />
-                                        </motion.div>
-                                        <span className="text-lg font-bold text-slate-800">Weather</span>
-                                    </motion.button>
-                                </Link>
-
-                                <motion.button
-                                    onClick={() => toast('Crop Doctor AI coming soon!', { icon: '🤖' })}
-                                    whileHover={{ scale: 1.05, y: -5 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                                    className="h-32 flex flex-col items-center justify-center p-4 bg-gradient-to-br from-white to-amber-50 rounded-2xl border border-white/60 shadow-lg hover:shadow-2xl transition-shadow group relative overflow-hidden"
-                                >
-                                    <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/10 rounded-full -mr-8 -mt-8 blur-xl"></div>
-                                    <motion.div
-                                        whileHover={{ rotate: [0, -10, 10, 0] }}
-                                        transition={{ duration: 0.5 }}
-                                        className="mb-3 p-3 bg-amber-100 rounded-xl text-amber-600"
-                                    >
-                                        <Leaf className="w-8 h-8" />
-                                    </motion.div>
-                                    <span className="text-lg font-bold text-slate-800">Crop Doc</span>
-                                </motion.button>
-                            </div>
-                        </motion.div>
 
                     </div>
                 </div>

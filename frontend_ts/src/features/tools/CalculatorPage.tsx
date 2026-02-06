@@ -1,205 +1,263 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Calculator, ArrowLeft, Truck, ArrowRight, Info, AlertTriangle, CheckCircle } from 'lucide-react';
-import { Button } from '../../components/ui/Button';
+import { useState, useEffect } from 'react';
+import { motion, useSpring, useTransform } from 'framer-motion';
+import { Truck, Calculator, ChevronLeft, Save, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { calculateReturns, type CalculationResult } from './calculatorEngine';
+
+interface HistoryItem {
+    id: number;
+    crop: string;
+    qty: number;
+    net: number;
+    date: string;
+}
 
 export const CalculatorPage = () => {
-    const navigate = useNavigate();
-
     // Inputs
-    const [crop, setCrop] = useState('Onion');
+    const [price, setPrice] = useState<number | ''>('');
+    const [quantity, setQuantity] = useState<number | ''>('');
+    const [distance, setDistance] = useState<number | ''>('');
     const [unit, setUnit] = useState<'kg' | 'quintal'>('kg');
-    const [inputValue, setInputValue] = useState<number>(500); // Input value based on unit
-    const [distance, setDistance] = useState<number>(100); // km
-    const [vehicle, setVehicle] = useState('pickup');
+    const [selectedVehicle, setSelectedVehicle] = useState<'tractor' | 'pickup' | 'truck' | null>(null);
 
-    // Rates (Mock DB)
-    const marketPrices: Record<string, number> = {
-        'Onion': 24, // ₹/kg
-        'Tomato': 32,
-        'Soybean': 45,
-        'Potato': 18
+    // Engine State
+    const [result, setResult] = useState<CalculationResult | null>(null);
+    const [history, setHistory] = useState<HistoryItem[]>([]);
+
+    // Animation Springs
+    const animatedRevenue = useSpring(0, { stiffness: 100, damping: 20 });
+    const animatedExpenses = useSpring(0, { stiffness: 100, damping: 20 });
+    const animatedNet = useSpring(0, { stiffness: 100, damping: 20 });
+
+    const displayRevenue = useTransform(animatedRevenue, (latest) => Math.round(latest).toLocaleString());
+    const displayExpenses = useTransform(animatedExpenses, (latest) => Math.round(latest).toLocaleString());
+    const displayNet = useTransform(animatedNet, (latest) => Math.round(latest).toLocaleString());
+
+    // Vehicle Rates
+    const vehicles = [
+        { id: 'tractor', name: 'Tractor', rate: 12, capacity: '1-2 Ton' },
+        { id: 'pickup', name: 'Pickup', rate: 15, capacity: '2-4 Ton' },
+        { id: 'truck', name: 'Mini Truck', rate: 18, capacity: '5-8 Ton' }
+    ] as const;
+
+    // Recalculate Effect
+    useEffect(() => {
+        if (price && quantity && distance && selectedVehicle) {
+            const vehicleRate = vehicles.find(v => v.id === selectedVehicle)?.rate || 0;
+
+            // Normalize Price to ₹/kg
+            // If unit is quintal, price input is ₹/100kg. So ₹/kg = Input / 100.
+            const pricePerKg = unit === 'quintal' ? (Number(price) / 100) : Number(price);
+
+            const calc = calculateReturns(
+                pricePerKg,
+                Number(quantity),
+                Number(distance),
+                vehicleRate
+            );
+
+            setResult(calc);
+
+            // Trigger Animations
+            if (calc) {
+                animatedRevenue.set(calc.grossRevenue);
+                animatedExpenses.set(calc.totalExpenses);
+                animatedNet.set(calc.netProfit);
+            }
+        } else {
+            setResult(null);
+        }
+    }, [price, quantity, distance, selectedVehicle, unit]);
+
+    const handleSave = () => {
+        if (result && quantity) {
+            const newItem: HistoryItem = {
+                id: Date.now(),
+                crop: 'Simulated Crop', // Could add a crop selector later
+                qty: Number(quantity),
+                net: result.netProfit,
+                date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            setHistory(prev => [newItem, ...prev].slice(0, 5)); // Keep last 5
+        }
     };
 
-    const vehicles = [
-        { id: 'tractor', name: 'Tractor', rate: 12, capacity: '2 Ton', icon: Truck },
-        { id: 'pickup', name: 'Pickup', rate: 15, capacity: '1.5 Ton', icon: Truck },
-        { id: 'truck', name: 'Mini Truck', rate: 18, capacity: '4 Ton', icon: Truck },
-    ];
-
-    // Derived Logic
-    const quantityKg = unit === 'kg' ? inputValue : inputValue * 100;
-    const pricePerKg = marketPrices[crop];
-    const selectedVehicle = vehicles.find(v => v.id === vehicle) || vehicles[0];
-
-    // Financials
-    const grossRevenue = pricePerKg * quantityKg;
-    const transportCost = distance * selectedVehicle.rate;
-    const laborCost = quantityKg * 2.50; // ₹2.50/kg loading/unloading
-    const totalCost = transportCost + laborCost;
-    const netProfit = grossRevenue - totalCost;
-    const isLoss = netProfit < 0;
-
     return (
-        <div className="min-h-screen bg-slate-50 p-4 lg:p-8">
-            <div className="max-w-6xl mx-auto">
-                <Button variant="ghost" className="mb-6 pl-0 hover:bg-transparent hover:text-emerald-600" onClick={() => navigate('/')}>
-                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
-                </Button>
+        <div className="min-h-screen bg-slate-50 p-6 flex items-center justify-center">
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Left: Input Form */}
-                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="p-3 bg-emerald-100 rounded-xl text-emerald-600">
-                                <Calculator className="w-6 h-6" />
-                            </div>
-                            <h1 className="text-2xl font-bold text-slate-900">Profit Calculator</h1>
-                        </div>
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="w-full max-w-lg space-y-6"
+            >
+                {/* Header */}
+                <div className="flex items-center gap-4 mb-6">
+                    <Link to="/dashboard" className="p-2 bg-white rounded-full shadow-sm hover:shadow-md transition-shadow text-slate-600">
+                        <ChevronLeft className="w-6 h-6" />
+                    </Link>
+                    <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                        <Calculator className="w-6 h-6 text-emerald-600" />
+                        Smart Profit Engine
+                    </h1>
+                </div>
 
-                        <div className="space-y-6">
-                            {/* Crop Selection */}
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">Select Crop</label>
-                                <select
-                                    value={crop}
-                                    onChange={(e) => setCrop(e.target.value)}
-                                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                >
-                                    {Object.keys(marketPrices).map(c => <option key={c} value={c}>{c}</option>)}
-                                </select>
-                                <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                                    <Info className="w-3 h-3" /> Current Market Rate: ₹{pricePerKg}/kg
-                                </p>
-                            </div>
+                {/* Main Card */}
+                <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 space-y-6">
 
-                            {/* Quantity with Unit Toggle */}
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">Quantity</label>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="number"
-                                        value={inputValue}
-                                        onChange={(e) => setInputValue(Number(e.target.value))}
-                                        className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                    />
-                                    <div className="flex bg-slate-100 p-1 rounded-xl">
-                                        <button
-                                            onClick={() => setUnit('kg')}
-                                            className={`px - 4 py - 2 rounded - lg text - sm font - medium transition - all ${unit === 'kg' ? 'bg-white shadow text-slate-900' : 'text-slate-500 hover:text-slate-700'} `}
-                                        >
-                                            kg
-                                        </button>
-                                        <button
-                                            onClick={() => setUnit('quintal')}
-                                            className={`px - 4 py - 2 rounded - lg text - sm font - medium transition - all ${unit === 'quintal' ? 'bg-white shadow text-slate-900' : 'text-slate-500 hover:text-slate-700'} `}
-                                        >
-                                            Quintal
-                                        </button>
-                                    </div>
-                                </div>
-                                <p className="text-xs text-slate-400 mt-1 text-right">Total: {quantityKg} kg</p>
-                            </div>
+                    {/* Unit Toggle */}
+                    <div className="flex bg-slate-100 p-1 rounded-xl">
+                        {(['kg', 'quintal'] as const).map(u => (
+                            <button
+                                key={u}
+                                onClick={() => setUnit(u)}
+                                className={`flex-1 py-2 rounded-lg text-sm font-bold capitalize transition-all ${unit === u ? 'bg-white shadow text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                            >
+                                ₹ / {u}
+                            </button>
+                        ))}
+                    </div>
 
-                            {/* Distance Slider */}
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Distance to Market: <span className="font-bold text-slate-900">{distance} km</span>
-                                </label>
+                    {/* Inputs */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Market Price</label>
+                            <div className="relative">
+                                <span className="absolute left-3 top-3 text-slate-400 font-bold">₹</span>
                                 <input
-                                    type="range"
-                                    min="10"
-                                    max="500"
-                                    value={distance}
-                                    onChange={(e) => setDistance(Number(e.target.value))}
-                                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                                    type="number"
+                                    value={price}
+                                    onChange={e => setPrice(Number(e.target.value) || '')}
+                                    className="w-full pl-8 pr-4 py-3 bg-slate-50 rounded-xl font-bold text-slate-800 border-2 border-transparent focus:border-emerald-500 focus:bg-white transition-all outline-none"
+                                    placeholder="0"
                                 />
                             </div>
-
-                            {/* Vehicle Selection Cards */}
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">Transport Mode</label>
-                                <div className="grid grid-cols-1 gap-2">
-                                    {vehicles.map((v) => (
-                                        <div
-                                            key={v.id}
-                                            onClick={() => setVehicle(v.id)}
-                                            className={`flex items - center justify - between p - 3 rounded - xl border cursor - pointer transition - all ${vehicle === v.id ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 hover:border-emerald-200 hover:bg-slate-50'} `}
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <div className={`p - 2 rounded - lg ${vehicle === v.id ? 'bg-emerald-200 text-emerald-800' : 'bg-slate-100 text-slate-500'} `}>
-                                                    <v.icon className="w-5 h-5" />
-                                                </div>
-                                                <div>
-                                                    <p className={`font - bold text - sm ${vehicle === v.id ? 'text-emerald-900' : 'text-slate-700'} `}>{v.name}</p>
-                                                    <p className="text-xs text-slate-500">Cap: {v.capacity}</p>
-                                                </div>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="font-bold text-slate-900 text-sm">₹{v.rate}/km</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Quantity (kg)</label>
+                            <input
+                                type="number"
+                                value={quantity}
+                                onChange={e => setQuantity(Number(e.target.value) || '')}
+                                className="w-full px-4 py-3 bg-slate-50 rounded-xl font-bold text-slate-800 border-2 border-transparent focus:border-emerald-500 focus:bg-white transition-all outline-none"
+                                placeholder="e.g. 500"
+                            />
                         </div>
                     </div>
 
-                    {/* Right: Live Receipt */}
-                    <div className={`rounded - 2xl p - 8 shadow - 2xl relative overflow - hidden flex flex - col justify - between transition - colors duration - 500 ${isLoss ? 'bg-slate-900' : 'bg-slate-900'} `}>
-                        {/* Background Glow */}
-                        <div className={`absolute top - 0 right - 0 p - 32 rounded - full blur - 3xl transition - colors duration - 500 ${isLoss ? 'bg-red-500/10' : 'bg-emerald-500/10'} `}></div>
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Distance to Mandi (km)</label>
+                        <input
+                            type="number"
+                            value={distance}
+                            onChange={e => setDistance(Number(e.target.value) || '')}
+                            className="w-full px-4 py-3 bg-slate-50 rounded-xl font-bold text-slate-800 border-2 border-transparent focus:border-emerald-500 focus:bg-white transition-all outline-none"
+                            placeholder="e.g. 45"
+                        />
+                    </div>
 
-                        <div className="relative z-10">
-                            <h3 className="text-slate-400 uppercase text-xs font-bold tracking-widest mb-6 border-b border-slate-700 pb-4">Estimated Net Profit</h3>
-
-                            <div className="space-y-4 text-sm text-slate-300">
-                                <div className="flex justify-between">
-                                    <span>Gross Revenue ({quantityKg}kg x ₹{pricePerKg})</span>
-                                    <span className="text-white font-mono">₹{grossRevenue.toLocaleString()}</span>
-                                </div>
-                                <div className="flex justify-between text-red-400">
-                                    <span className="flex items-center gap-2"><Truck className="w-3 h-3" /> Transport Cost</span>
-                                    <span className="font-mono">- ₹{transportCost.toLocaleString()}</span>
-                                </div>
-                                <div className="flex justify-between text-red-400">
-                                    <span>Labor & Loading (₹2.50/kg)</span>
-                                    <span className="font-mono">- ₹{laborCost.toLocaleString()}</span>
-                                </div>
-                            </div>
-
-                            <div className="mt-8 pt-8 border-t border-slate-700">
-                                <div className="flex justify-between items-end">
-                                    <span className={`text - lg font - medium ${isLoss ? 'text-red-400' : 'text-emerald-400'} `}>
-                                        {isLoss ? 'Net Loss' : 'Net Profit'}
-                                    </span>
-                                    <span className={`text - 4xl lg: text - 5xl font - bold font - mono transition - colors duration - 300 ${isLoss ? 'text-red-500' : 'text-emerald-400'} `}>
-                                        {isLoss ? '-' : ''}₹{Math.abs(netProfit).toLocaleString()}
-                                    </span>
-                                </div>
-                                {isLoss && (
-                                    <div className="mt-4 p-3 bg-red-900/30 border border-red-900/50 rounded-lg flex items-start gap-2 text-red-200 text-xs">
-                                        <AlertTriangle className="w-4 h-4 shrink-0 text-red-400" />
-                                        <p>Warning: Transport & Labor costs exceed your revenue. Increase quantity to improve margins.</p>
-                                    </div>
-                                )}
-                                {!isLoss && (
-                                    <div className="mt-4 p-3 bg-emerald-900/30 border border-emerald-900/50 rounded-lg flex items-start gap-2 text-emerald-200 text-xs">
-                                        <CheckCircle className="w-4 h-4 shrink-0 text-emerald-400" />
-                                        <p>Great! You are making a healthy profit on this trade.</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="mt-8">
-                            <Button className={`w - full text - white border - none py - 6 text - lg transition - colors ${isLoss ? 'bg-slate-700 hover:bg-slate-600' : 'bg-emerald-500 hover:bg-emerald-600'} `}>
-                                Save Calculation <ArrowRight className="w-5 h-5 ml-2" />
-                            </Button>
+                    {/* Vehicle Selection */}
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Vehicle Type</label>
+                        <div className="grid grid-cols-3 gap-2">
+                            {vehicles.map(v => (
+                                <button
+                                    key={v.id}
+                                    onClick={() => setSelectedVehicle(v.id as any)}
+                                    className={`p-3 rounded-xl border-2 text-left transition-all ${selectedVehicle === v.id
+                                        ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
+                                        : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
+                                        }`}
+                                >
+                                    <Truck className={`w-5 h-5 mb-2 ${selectedVehicle === v.id ? 'text-emerald-600' : 'text-slate-400'}`} />
+                                    <div className="text-xs font-bold">{v.name}</div>
+                                    <div className="text-[10px] opacity-70">₹{v.rate}/km</div>
+                                </button>
+                            ))}
                         </div>
                     </div>
+
+                    {/* LIVE RECEIPT */}
+                    {result && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-slate-900 rounded-2xl p-6 text-white shadow-2xl space-y-4 relative overflow-hidden"
+                        >
+                            {/* Background decoration */}
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+
+                            <div className="flex justify-between items-center text-slate-400 text-sm">
+                                <span>Gross Revenue</span>
+                                <div className="flex items-center gap-1 font-mono">
+                                    ₹<motion.span>{displayRevenue}</motion.span>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-between items-center text-red-300 text-sm">
+                                <span>Transport & Labor</span>
+                                <div className="flex items-center gap-1 font-mono">
+                                    -₹<motion.span>{displayExpenses}</motion.span>
+                                </div>
+                            </div>
+
+                            <div className="h-px bg-slate-700 border-t border-dashed border-slate-600 my-2"></div>
+
+                            <div className="flex justify-between items-end">
+                                <span className="text-slate-400 font-bold text-sm tracking-wider uppercase">Net Profit</span>
+                                <div className={`text-3xl font-bold font-mono ${result.isProfitable ? 'text-emerald-400' : 'text-red-400'}`}>
+                                    ₹<motion.span>{displayNet}</motion.span>
+                                </div>
+                            </div>
+
+                            {!result.isProfitable && (
+                                <div className="bg-red-500/20 text-red-200 text-xs p-2 rounded-lg text-center font-bold flex items-center justify-center gap-2">
+                                    <AlertTriangle className="w-4 h-4" />
+                                    Warning: Transport costs are eating your profit!
+                                </div>
+                            )}
+
+                            {result.isProfitable && (
+                                <div className="bg-emerald-500/20 text-emerald-200 text-xs p-2 rounded-lg text-center font-bold flex items-center justify-center gap-2">
+                                    <CheckCircle className="w-4 h-4" />
+                                    Healthy profit margin!
+                                </div>
+                            )}
+
+                            <button
+                                onClick={handleSave}
+                                className="w-full py-3 rounded-xl font-bold bg-white/10 hover:bg-white/20 text-white mt-2 flex items-center justify-center gap-2 transition-colors"
+                            >
+                                <Save className="w-4 h-4" />
+                                Save to History
+                            </button>
+                        </motion.div>
+                    )}
                 </div>
-            </div>
+
+                {/* Recent Simulations */}
+                {history.length > 0 && (
+                    <div className="space-y-3">
+                        <h3 className="text-slate-500 font-bold text-sm uppercase tracking-wider pl-2">Recent Simulations</h3>
+                        {history.map(item => (
+                            <motion.div
+                                key={item.id}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex justify-between items-center"
+                            >
+                                <div>
+                                    <div className="font-bold text-slate-800">{item.qty}kg Load</div>
+                                    <div className="text-xs text-slate-400">{item.date}</div>
+                                </div>
+                                <div className={`font-mono font-bold ${item.net > 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                                    {item.net > 0 ? '+' : ''}₹{item.net.toLocaleString()}
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                )}
+
+            </motion.div>
         </div>
     );
 };
