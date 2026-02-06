@@ -1,6 +1,18 @@
-# Agri-Pivot AI MVP
+# Agri-Pivot AI 🌾
 
-Industry-Grade Predictive Agriculture App using FastAPI, Prophet, and React.
+**Smart Mandi Price Prediction & Logistics Optimization System**
+
+## ⚡ Quick Start (One-Click)
+No technical setup required. Just use the launcher for your OS:
+
+- **Windows**: Double-click `start_app.bat`
+- **Mac/Linux**: Run `./start_app.sh` in terminal
+
+The system will automatically check for dependencies, install them if missing, and launch both the **Frontend** and **Backend** servers instantly.
+
+---
+
+## Technical Overview
 
 ## Project Structure
 
