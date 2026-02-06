@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+
 import { useAuth } from './features/auth/useAuth';
 import { LoginPage } from './features/auth/LoginPage';
 import { Dashboard } from './features/dashboard/Dashboard';

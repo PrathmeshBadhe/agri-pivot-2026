@@ -1,7 +1,7 @@
 import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
+
 import { cn } from "../../lib/utils"
+
 
 // Simplified version without radix slot dependency for strict adherence to "no extra installs" if possible, 
 // but lucide-react was approved. Radix is standard but let's keep it simple HTML button for now to avoid dependency hell if not installed.

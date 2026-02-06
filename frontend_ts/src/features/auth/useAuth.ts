@@ -30,7 +30,7 @@ export const useAuth = create<AuthState>((set) => ({
                         id: data.user.id,
                         email: data.user.email!,
                         full_name: data.user.user_metadata?.full_name,
-                        role: data.user.user_metadata?.role,
+                        role: data.user.user_metadata?.role as 'farmer' | 'trader' | undefined,
                     }
                 });
             }

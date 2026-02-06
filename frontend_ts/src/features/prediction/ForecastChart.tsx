@@ -1,5 +1,5 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
-import { PredictionPoint } from './usePrediction';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import type { PredictionPoint } from './usePrediction';
 
 interface ForecastChartProps {
     data: PredictionPoint[];
@@ -26,15 +26,24 @@ export const ForecastChart = ({ data, isLoading }: ForecastChartProps) => {
         // For simplicity, let's just match them.
         priceForecast: pt.type === 'forecast' ? pt.price : null,
         // Add nulls to history for range area so it doesn't draw at 0
-        range: pt.type === 'forecast' ? [pt.yhat_lower, pt.yhat_upper] : null
+        // Add nulls to history for range area so it doesn't draw at 0
+        range: pt.type === 'forecast' && pt.yhat_lower != null && pt.yhat_upper != null
+            ? [pt.yhat_lower, pt.yhat_upper]
+            : null
     }));
 
     // Hack: Bridge the gap between history and forecast visually
-    // Find last history index
-    const lastHistoryIndex = chartData.findLastIndex(d => d.type === 'history');
+    // Find last history index (Compatible way)
+    let lastHistoryIndex = -1;
+    for (let i = chartData.length - 1; i >= 0; i--) {
+        if (chartData[i].type === 'history') {
+            lastHistoryIndex = i;
+            break;
+        }
+    }
+
     if (lastHistoryIndex >= 0 && lastHistoryIndex < chartData.length - 1) {
-        chartData[lastHistoryIndex].priceForecast = chartData[lastHistoryIndex].priceHistory; // Connect lines
-        // chartData[lastHistoryIndex].range = [chartData[lastHistoryIndex].priceHistory, chartData[lastHistoryIndex].priceHistory]; // Start range?
+        chartData[lastHistoryIndex].priceForecast = chartData[lastHistoryIndex].priceHistory;
     }
 
     return (
