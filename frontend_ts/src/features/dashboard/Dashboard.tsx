@@ -188,32 +188,90 @@ export const Dashboard = () => {
                             </Link>
                         </motion.div>
 
-                        {/* Widget 3: Quick Tools */}
+                        {/* Widget 3: Quick Tools (Redesigned) */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
                             viewport={{ once: true }}
-                            className="col-span-1 bg-emerald-50 p-6 rounded-2xl border border-emerald-100"
+                            className="col-span-1 bg-white/60 backdrop-blur-xl p-8 rounded-3xl border border-white/50 shadow-xl"
                         >
-                            <h3 className="text-emerald-800 text-xs font-bold uppercase mb-4">Quick Tools</h3>
-                            <div className="grid grid-cols-2 gap-3">
-                                <Link to="/calculator" className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
-                                    <Calculator className="w-5 h-5 mb-1" />
-                                    <span className="text-[10px] font-bold">Profit Calc</span>
+                            <h3 className="text-slate-800 text-sm font-bold uppercase tracking-widest mb-6 opacity-70">Quick Actions</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                                <Link to="/calculator" className="contents">
+                                    <motion.button
+                                        whileHover={{ scale: 1.05, y: -5 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                                        className="h-32 flex flex-col items-center justify-center p-4 bg-gradient-to-br from-white to-emerald-50 rounded-2xl border border-white/60 shadow-lg hover:shadow-2xl transition-shadow group relative overflow-hidden"
+                                    >
+                                        <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 rounded-full -mr-8 -mt-8 blur-xl"></div>
+                                        <motion.div
+                                            whileHover={{ rotate: [0, -10, 10, 0] }}
+                                            transition={{ duration: 0.5 }}
+                                            className="mb-3 p-3 bg-emerald-100 rounded-xl text-emerald-600"
+                                        >
+                                            <Calculator className="w-8 h-8" />
+                                        </motion.div>
+                                        <span className="text-lg font-bold text-slate-800">Profit Calc</span>
+                                    </motion.button>
                                 </Link>
-                                <Link to="/logistics" className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
-                                    <Tractor className="w-5 h-5 mb-1" />
-                                    <span className="text-[10px] font-bold">Logistics</span>
+
+                                <Link to="/logistics" className="contents">
+                                    <motion.button
+                                        whileHover={{ scale: 1.05, y: -5 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                                        className="h-32 flex flex-col items-center justify-center p-4 bg-gradient-to-br from-white to-indigo-50 rounded-2xl border border-white/60 shadow-lg hover:shadow-2xl transition-shadow group relative overflow-hidden"
+                                    >
+                                        <div className="absolute top-0 right-0 w-16 h-16 bg-indigo-500/10 rounded-full -mr-8 -mt-8 blur-xl"></div>
+                                        <motion.div
+                                            whileHover={{ rotate: [0, -10, 10, 0] }}
+                                            transition={{ duration: 0.5 }}
+                                            className="mb-3 p-3 bg-indigo-100 rounded-xl text-indigo-600"
+                                        >
+                                            <Tractor className="w-8 h-8" />
+                                        </motion.div>
+                                        <span className="text-lg font-bold text-slate-800">Logistics</span>
+                                    </motion.button>
                                 </Link>
-                                <Link to="/weather" className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
-                                    <CloudSun className="w-5 h-5 mb-1" />
-                                    <span className="text-[10px] font-bold">Weather</span>
+
+                                <Link to="/weather" className="contents">
+                                    <motion.button
+                                        whileHover={{ scale: 1.05, y: -5 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                                        className="h-32 flex flex-col items-center justify-center p-4 bg-gradient-to-br from-white to-sky-50 rounded-2xl border border-white/60 shadow-lg hover:shadow-2xl transition-shadow group relative overflow-hidden"
+                                    >
+                                        <div className="absolute top-0 right-0 w-16 h-16 bg-sky-500/10 rounded-full -mr-8 -mt-8 blur-xl"></div>
+                                        <motion.div
+                                            whileHover={{ rotate: [0, -10, 10, 0] }}
+                                            transition={{ duration: 0.5 }}
+                                            className="mb-3 p-3 bg-sky-100 rounded-xl text-sky-600"
+                                        >
+                                            <CloudSun className="w-8 h-8" />
+                                        </motion.div>
+                                        <span className="text-lg font-bold text-slate-800">Weather</span>
+                                    </motion.button>
                                 </Link>
-                                <button onClick={() => toast('Crop Doctor AI coming soon!', { icon: '🤖' })} className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
-                                    <Leaf className="w-5 h-5 mb-1" />
-                                    <span className="text-[10px] font-bold">Crop Doc</span>
-                                </button>
+
+                                <motion.button
+                                    onClick={() => toast('Crop Doctor AI coming soon!', { icon: '🤖' })}
+                                    whileHover={{ scale: 1.05, y: -5 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                                    className="h-32 flex flex-col items-center justify-center p-4 bg-gradient-to-br from-white to-amber-50 rounded-2xl border border-white/60 shadow-lg hover:shadow-2xl transition-shadow group relative overflow-hidden"
+                                >
+                                    <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/10 rounded-full -mr-8 -mt-8 blur-xl"></div>
+                                    <motion.div
+                                        whileHover={{ rotate: [0, -10, 10, 0] }}
+                                        transition={{ duration: 0.5 }}
+                                        className="mb-3 p-3 bg-amber-100 rounded-xl text-amber-600"
+                                    >
+                                        <Leaf className="w-8 h-8" />
+                                    </motion.div>
+                                    <span className="text-lg font-bold text-slate-800">Crop Doc</span>
+                                </motion.button>
                             </div>
                         </motion.div>
 
