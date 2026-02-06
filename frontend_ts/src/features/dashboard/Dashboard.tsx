@@ -3,9 +3,9 @@ import { useAuth } from '../auth/useAuth';
 import { Button } from '../../components/ui/Button';
 import { ForecastChart } from '../prediction/ForecastChart';
 import { usePrediction } from '../prediction/usePrediction';
-import { TrendingUp, TrendingDown, Tractor, Calculator, CloudSun, Leaf, Bell, Pencil, Check, X } from 'lucide-react';
+import { TrendingUp, TrendingDown, Tractor, Calculator, CloudSun, Leaf, Bell, Pencil, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 
 export const Dashboard = () => {
@@ -15,9 +15,6 @@ export const Dashboard = () => {
     // Profile Editing State
     const [isEditing, setIsEditing] = useState(false);
     const [tempName, setTempName] = useState(user?.full_name || '');
-
-    // Modal State
-    const [showLogisticsModal, setShowLogisticsModal] = useState(false);
 
     // Sync temp name when user loads
     useEffect(() => {
@@ -36,33 +33,6 @@ export const Dashboard = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 relative">
-            {/* Logistics Modal */}
-            <AnimatePresence>
-                {showLogisticsModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl"
-                        >
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-xl font-bold text-slate-900">Transport Pool</h3>
-                                <button onClick={() => setShowLogisticsModal(false)} className="text-slate-400 hover:text-slate-600">
-                                    <X className="w-5 h-5" />
-                                </button>
-                            </div>
-                            <div className="bg-emerald-50 text-emerald-800 p-4 rounded-xl mb-4 text-sm font-medium">
-                                🚚 Feature Coming Soon
-                            </div>
-                            <p className="text-slate-600 mb-6 text-sm">
-                                Soon you will be able to pool trucks with other farmers in Pune district to save 30% on transport costs.
-                            </p>
-                            <Button className="w-full" onClick={() => setShowLogisticsModal(false)}>Got it</Button>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
 
             {/* Header */}
             <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
@@ -188,10 +158,12 @@ export const Dashboard = () => {
                                 </div>
                             </div>
                         </div>
-                        <Button variant="outline" size="sm" className="w-full mt-4 text-xs group">
-                            View All Mandis
-                            <span className="ml-1 inline-block transition-transform group-hover:translate-x-1">→</span>
-                        </Button>
+                        <Link to="/markets">
+                            <Button variant="outline" size="sm" className="w-full mt-4 text-xs group">
+                                View All Mandis
+                                <span className="ml-1 inline-block transition-transform group-hover:translate-x-1">→</span>
+                            </Button>
+                        </Link>
                     </motion.div>
 
                     {/* Widget 3: Quick Tools */}
@@ -208,10 +180,10 @@ export const Dashboard = () => {
                                 <Calculator className="w-5 h-5 mb-1" />
                                 <span className="text-[10px] font-bold">Profit Calc</span>
                             </Link>
-                            <button onClick={() => setShowLogisticsModal(true)} className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
+                            <Link to="/logistics" className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
                                 <Tractor className="w-5 h-5 mb-1" />
                                 <span className="text-[10px] font-bold">Logistics</span>
-                            </button>
+                            </Link>
                             <Link to="/weather" className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all text-emerald-700 cursor-pointer">
                                 <CloudSun className="w-5 h-5 mb-1" />
                                 <span className="text-[10px] font-bold">Weather</span>

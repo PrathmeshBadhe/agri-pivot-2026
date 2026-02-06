@@ -8,6 +8,9 @@ import { Toaster } from 'react-hot-toast';
 import { CalculatorPage } from './features/tools/CalculatorPage';
 import { WeatherPage } from './features/tools/WeatherPage';
 
+import { MarketPage } from './features/market/MarketPage';
+import { LogisticsPage } from './features/tools/LogisticsPage';
+
 function App() {
     const { user, isLoading } = useAuth();
 
@@ -26,6 +29,8 @@ function App() {
                 <Route path="/" element={user ? <Dashboard /> : <Navigate to="/login" />} />
                 <Route path="/calculator" element={user ? <CalculatorPage /> : <Navigate to="/login" />} />
                 <Route path="/weather" element={user ? <WeatherPage /> : <Navigate to="/login" />} />
+                <Route path="/markets" element={user ? <MarketPage /> : <Navigate to="/login" />} />
+                <Route path="/logistics" element={user ? <LogisticsPage /> : <Navigate to="/login" />} />
             </Routes>
         </BrowserRouter>
     );
