@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { supabase } from '../../lib/supabase';
 
 interface User {
     id: string;
@@ -16,6 +15,17 @@ interface AuthState {
     updateProfile: (name: string) => void;
 }
 
+const DEMO_CREDENTIALS = {
+    email: 'farmer@agri.com',
+    password: 'demo',
+    user: {
+        id: 'demo-user-001',
+        email: 'farmer@agri.com',
+        full_name: 'Agri Farmer',
+        role: 'farmer' as const,
+    },
+};
+
 const getStoredUser = (): User | null => {
     try {
         const stored = localStorage.getItem('agri_user');
@@ -31,18 +41,15 @@ export const useAuth = create<AuthState>((set) => ({
     login: async (email, password) => {
         set({ isLoading: true });
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) throw error;
+            // Simulate network delay
+            await new Promise((r) => setTimeout(r, 600));
 
-            if (data.user) {
-                const newUser: User = {
-                    id: data.user.id,
-                    email: data.user.email!,
-                    full_name: data.user.user_metadata?.full_name,
-                    role: data.user.user_metadata?.role as 'farmer' | 'trader' | undefined,
-                };
+            if (email === DEMO_CREDENTIALS.email && password === DEMO_CREDENTIALS.password) {
+                const newUser: User = { ...DEMO_CREDENTIALS.user };
                 localStorage.setItem('agri_user', JSON.stringify(newUser));
                 set({ user: newUser });
+            } else {
+                throw new Error('Invalid credentials');
             }
         } catch (error) {
             console.error('Login failed:', error);
@@ -52,7 +59,6 @@ export const useAuth = create<AuthState>((set) => ({
         }
     },
     logout: async () => {
-        await supabase.auth.signOut();
         localStorage.removeItem('agri_user');
         set({ user: null });
     },

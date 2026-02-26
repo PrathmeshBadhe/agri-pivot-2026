@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useAuth } from './useAuth';
 import { Button } from '../../components/ui/Button';
 import { Sprout, Tractor } from 'lucide-react';
@@ -9,7 +9,7 @@ export const LoginPage = () => {
     const [password, setPassword] = useState('demo');
     const { login, isLoading } = useAuth();
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         await login(email, password);
     };
