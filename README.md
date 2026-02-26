@@ -88,9 +88,10 @@ python main.py             # Starts on http://localhost:8000
 
 1. Push to GitHub
 2. Import project in [Vercel](https://vercel.com)
-3. Set **Root Directory** to `frontend_ts`
-4. Framework preset: **Vite** (auto-detected)
-5. Deploy
+3. Set **Production Branch** to `dev` (Settings → Git → Production Branch)
+4. Set **Root Directory** to `frontend_ts`
+5. Framework preset: **Vite** (auto-detected)
+6. Deploy
 
 The `vercel.json` SPA rewrite is already configured.
 
