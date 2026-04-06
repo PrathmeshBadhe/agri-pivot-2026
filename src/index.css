@@ -9,41 +9,44 @@
 body {
   margin: 0;
   padding: 0;
-  /* iOS 18 Mesh Gradient Base */
   background: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
     radial-gradient(at 100% 0%, rgba(100, 116, 139, 0.1) 0px, transparent 50%),
     radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
     radial-gradient(at 0% 100%, rgba(100, 116, 139, 0.05) 0px, transparent 50%),
     #f8fafc;
-  /* Fallback to slate-50 */
   background-attachment: fixed;
-  /* Keep gradient fixed during scroll */
   color: #1e293b;
-  /* Slate-800 for text */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Safe area for notched / dynamic-island iPhones */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
+
+/* Safe-area utility */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.mb-nav  { margin-bottom: 72px; } /* space for bottom nav on mobile */
 
 /* Custom Scrollbar for WebKit */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
 @layer utilities {
   .glass-panel {
     @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl;
+  }
+
+  /* Touch-friendly tap highlight removal */
+  .tap-none {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

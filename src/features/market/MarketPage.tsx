@@ -168,7 +168,7 @@ export const MarketPage = () => {
     const best = marketsWithProfit[0];
 
     return (
-        <div className="min-h-screen bg-slate-50 p-4 lg:p-8">
+        <div className="min-h-screen bg-slate-50 p-4 lg:p-8 pb-24 md:pb-8">
             <div className="max-w-6xl mx-auto">
                 <Button variant="ghost" className="mb-6 pl-0 hover:bg-transparent hover:text-emerald-600" onClick={() => navigate('/')}>
                     <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
@@ -191,24 +191,26 @@ export const MarketPage = () => {
                     </div>
                 </div>
 
-                {/* Crop Selector */}
-                <div className="flex gap-2 mb-6">
-                    {CROPS.map(c => (
-                        <button
-                            key={c.key}
-                            onClick={() => setSelectedCrop(c.key)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border transition-all ${
-                                selectedCrop === c.key
-                                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
-                                    : 'bg-white text-slate-600 border-slate-200 hover:border-emerald-300'
-                            }`}
-                        >
-                            <span>{c.emoji}</span> {c.label}
-                        </button>
-                    ))}
+                {/* Crop Selector & Qty Picker */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-6 items-start sm:items-center">
+                    <div className="flex gap-2 overflow-x-auto no-scrollbar max-w-full pb-1 sm:pb-0">
+                        {CROPS.map(c => (
+                            <button
+                                key={c.key}
+                                onClick={() => setSelectedCrop(c.key)}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border transition-all whitespace-nowrap ${
+                                    selectedCrop === c.key
+                                        ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
+                                        : 'bg-white text-slate-600 border-slate-200 hover:border-emerald-300'
+                                }`}
+                            >
+                                <span>{c.emoji}</span> {c.label}
+                            </button>
+                        ))}
+                    </div>
 
                     {/* Qty picker */}
-                    <div className="ml-auto flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3 py-2">
+                    <div className="sm:ml-auto flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3 py-2 w-full sm:w-auto justify-center sm:justify-start">
                         <Package className="w-4 h-4 text-slate-400" />
                         <label className="text-xs text-slate-500">Qty:</label>
                         <select

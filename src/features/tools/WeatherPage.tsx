@@ -222,7 +222,7 @@ export const WeatherPage = () => {
     const advisories = weather ? getAdvisories(temp, hum, rain, wind, code) : [];
 
     return (
-        <div className="min-h-screen bg-slate-50 p-4 lg:p-8">
+        <div className="min-h-screen bg-slate-50 p-4 lg:p-8 pb-24 md:pb-8">
             <div className="max-w-3xl mx-auto">
                 <Button variant="ghost" className="mb-6 pl-0 hover:bg-transparent hover:text-emerald-600" onClick={() => navigate('/')}>
                     <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
@@ -283,10 +283,10 @@ export const WeatherPage = () => {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-6"
+                            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-6 overflow-hidden"
                         >
                             <h3 className="text-slate-900 font-bold mb-4">7-Day Forecast</h3>
-                            <div className="grid grid-cols-7 gap-1 text-center">
+                            <div className="flex sm:grid sm:grid-cols-7 gap-2 text-center overflow-x-auto no-scrollbar pb-2 sm:pb-0">
                                 {daily?.time?.map((date: string, idx: number) => {
                                     const d     = new Date(date);
                                     const dCode = daily.weather_code[idx];
@@ -295,7 +295,7 @@ export const WeatherPage = () => {
                                     const minT    = Math.round(daily.temperature_2m_min[idx]);
                                     const rain7   = daily.precipitation_sum[idx];
                                     return (
-                                        <div key={idx} className={`p-2 rounded-xl ${idx === 0 ? 'bg-blue-50 ring-1 ring-blue-200' : 'hover:bg-slate-50'} transition-colors`}>
+                                        <div key={idx} className={`min-w-[80px] sm:min-w-0 p-2 rounded-xl ${idx === 0 ? 'bg-blue-50 ring-1 ring-blue-200' : 'hover:bg-slate-50'} transition-colors`}>
                                             <p className="text-slate-500 text-[11px] font-medium mb-1">{idx === 0 ? 'Today' : days[d.getDay()]}</p>
                                             <div className="text-2xl mb-1">{icon}</div>
                                             <p className="text-slate-900 font-bold text-sm">{maxT}°</p>

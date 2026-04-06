@@ -53,32 +53,34 @@ export const Dashboard = () => {
                         </button>
 
                         <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
-                            <div className="text-right hidden md:block group">
-                                {isEditing ? (
-                                    <div className="flex items-center gap-2">
-                                        <input
-                                            type="text"
-                                            value={tempName}
-                                            onChange={(e) => setTempName(e.target.value)}
-                                            className="px-2 py-1 text-sm border border-emerald-300 rounded focus:outline-none focus:ring-1 focus:ring-emerald-500 w-32"
-                                            autoFocus
-                                        />
-                                        <button onClick={handleSaveProfile} className="p-1 text-emerald-600 hover:bg-emerald-50 rounded">
-                                            <Check className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center gap-2">
-                                        <p className="text-sm font-bold text-slate-800">{user?.full_name || 'Agri-User'}</p>
-                                        <button onClick={() => setIsEditing(true)} className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-slate-400 hover:text-emerald-600">
-                                            <Pencil className="w-3 h-3" />
-                                        </button>
-                                    </div>
-                                )}
-                                <p className="text-xs text-slate-500">Farmer • Premium</p>
-                            </div>
-                            <div className="w-10 h-10 bg-slate-100 rounded-full border border-slate-200 flex items-center justify-center font-bold text-emerald-700">
-                                {user?.full_name ? user.full_name[0] : 'U'}
+                            <div className="flex items-center gap-2 max-w-[120px] md:max-w-none">
+                                <div className="text-right hidden sm:block">
+                                    {isEditing ? (
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="text"
+                                                value={tempName}
+                                                onChange={(e) => setTempName(e.target.value)}
+                                                className="px-2 py-1 text-sm border border-emerald-300 rounded focus:outline-none focus:ring-1 focus:ring-emerald-500 w-24 md:w-32"
+                                                autoFocus
+                                            />
+                                            <button onClick={handleSaveProfile} className="p-1 text-emerald-600 hover:bg-emerald-50 rounded">
+                                                <Check className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-2 overflow-hidden">
+                                            <p className="text-sm font-bold text-slate-800 truncate">{user?.full_name || 'Agri-User'}</p>
+                                            <button onClick={() => setIsEditing(true)} className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-slate-400 hover:text-emerald-600">
+                                                <Pencil className="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                    )}
+                                    <p className="text-[10px] md:text-xs text-slate-500">Farmer • Premium</p>
+                                </div>
+                                <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-100 rounded-full border border-slate-200 flex items-center justify-center font-bold text-emerald-700 shrink-0">
+                                    {user?.full_name ? user.full_name[0] : 'U'}
+                                </div>
                             </div>
                         </div>
                         <Button variant="ghost" size="sm" onClick={logout} className="text-red-500 hover:bg-red-50 hover:text-red-600">
@@ -88,7 +90,7 @@ export const Dashboard = () => {
                 </div>
             </header>
 
-            <main className="max-w-7xl mx-auto px-4 lg:px-6 py-8">
+            <main className="max-w-7xl mx-auto px-4 lg:px-6 py-8 pb-24 md:pb-8">
                 {/* Hero Section */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold tracking-tight text-slate-900">Welcome back, {user?.full_name?.split(' ')[0] || 'Farmer'}! 🌾</h1>
@@ -175,12 +177,12 @@ export const Dashboard = () => {
                                     Price Forecast
                                 </h2>
 
-                                <div className="flex bg-slate-100 p-1 rounded-xl">
+                                <div className="flex bg-slate-100 p-1 rounded-xl overflow-x-auto no-scrollbar max-w-full">
                                     {['Onion', 'Tomato', 'Potato'].map(c => (
                                         <button
                                             key={c}
                                             onClick={() => setSelectedCrop(c)}
-                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${selectedCrop === c ? 'bg-white shadow text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${selectedCrop === c ? 'bg-white shadow text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
                                         >
                                             {c}
                                         </button>

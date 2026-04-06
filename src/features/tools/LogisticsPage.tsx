@@ -14,7 +14,7 @@ export const LogisticsPage = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 p-4 lg:p-8">
+        <div className="min-h-screen bg-slate-50 p-4 lg:p-8 pb-24 md:pb-8">
             <div className="max-w-4xl mx-auto">
                 <Button variant="ghost" className="mb-6 pl-0 hover:bg-transparent hover:text-emerald-600" onClick={() => navigate('/')}>
                     <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard

@@ -106,7 +106,7 @@ export const CalculatorPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 relative">
+        <div className="min-h-screen bg-slate-50 relative pb-24 md:pb-8">
 
             {/* Sticky Header */}
             <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 py-3 mb-6">
