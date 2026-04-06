@@ -6,7 +6,27 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // ─── Real verified mandi data — April 6, 2026 ──────────────────────
 // Sources: CommodityOnline, KisanDeals, Napanta, MandIPulse
-const MANDI_DATA: Record<string, typeof ONION_MANDIS> = {
+
+interface MandiEntry {
+    id: number;
+    name: string;
+    state: string;
+    district: string;
+    minPrice: number;
+    modalPrice: number;
+    maxPrice: number;
+    arrival: string;
+    distance: number;
+    grade: string;
+    trend: 'up' | 'down' | 'stable';
+    changePct: number;
+    contact: string;
+    timing: string;
+    note: string;
+    tag: string;
+}
+
+const MANDI_DATA: Record<string, MandiEntry[]> = {
     onion: [
         {
             id: 1, name: 'Lasalgaon APMC', state: 'Maharashtra', district: 'Nashik',
@@ -114,8 +134,6 @@ const MANDI_DATA: Record<string, typeof ONION_MANDIS> = {
         },
     ],
 };
-
-const ONION_MANDIS = MANDI_DATA.onion;
 
 const CROPS = [
     { key: 'onion',  label: 'Onion',  emoji: '🧅', color: 'emerald' },
