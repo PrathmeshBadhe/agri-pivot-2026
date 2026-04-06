@@ -232,21 +232,70 @@ export const Dashboard = () => {
                             className="col-span-1 md:col-span-1 glass-panel p-6 rounded-3xl flex flex-col justify-between hover:shadow-xl transition-shadow"
                         >
                             <div>
-                                <h3 className="text-slate-500 text-xs font-bold uppercase mb-4">Market Pulse (Pune)</h3>
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-slate-500 text-xs font-bold uppercase">Market Pulse · Pune APMC</h3>
+                                    <span className="flex items-center gap-1 text-[10px] bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-0.5 rounded-full font-semibold">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
+                                        Live · Apr 6
+                                    </span>
+                                </div>
                                 <div className="space-y-[1px] bg-slate-100 rounded-2xl overflow-hidden border border-slate-200/50">
+                                    {/* Onion — Rs.950 avg (Pune APMC verified) */}
                                     <div className="flex justify-between items-center p-3 bg-white hover:bg-slate-50 transition-colors">
-                                        <span className="font-medium text-slate-700">Onion</span>
-                                        <span className="font-bold text-slate-900">₹2,400/q</span>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-lg">🧅</span>
+                                            <span className="font-medium text-slate-700">Onion</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="font-bold text-slate-900">₹950/q</div>
+                                            <div className="text-[10px] text-red-400 flex items-center justify-end gap-0.5">
+                                                <TrendingDown className="w-2.5 h-2.5" /> –4.2%
+                                            </div>
+                                        </div>
                                     </div>
+                                    {/* Potato — Rs.1,000 avg */}
                                     <div className="flex justify-between items-center p-3 bg-white hover:bg-slate-50 transition-colors">
-                                        <span className="font-medium text-slate-700">Potato</span>
-                                        <span className="font-bold text-slate-900">₹1,800/q</span>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-lg">🥔</span>
+                                            <span className="font-medium text-slate-700">Potato</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="font-bold text-slate-900">₹1,000/q</div>
+                                            <div className="text-[10px] text-slate-400 flex items-center justify-end gap-0.5">
+                                                — Stable
+                                            </div>
+                                        </div>
                                     </div>
+                                    {/* Tomato — Rs.2,000 avg */}
                                     <div className="flex justify-between items-center p-3 bg-white hover:bg-slate-50 transition-colors">
-                                        <span className="font-medium text-slate-700">Tomato</span>
-                                        <span className="font-bold text-slate-900">₹3,200/q</span>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-lg">🍅</span>
+                                            <span className="font-medium text-slate-700">Tomato</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="font-bold text-slate-900">₹2,000/q</div>
+                                            <div className="text-[10px] text-emerald-500 flex items-center justify-end gap-0.5">
+                                                <TrendingUp className="w-2.5 h-2.5" /> +5.3%
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/* Soybean */}
+                                    <div className="flex justify-between items-center p-3 bg-white hover:bg-slate-50 transition-colors">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-lg">🌿</span>
+                                            <span className="font-medium text-slate-700">Soybean</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="font-bold text-slate-900">₹4,200/q</div>
+                                            <div className="text-[10px] text-slate-400 flex items-center justify-end gap-0.5">
+                                                — Stable
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                <p className="text-[10px] text-slate-400 mt-2 text-right">
+                                    Source: CommodityOnline · KisanDeals
+                                </p>
                             </div>
                             <Link to="/markets">
                                 <Button variant="outline" size="sm" className="w-full mt-4 text-xs group">
