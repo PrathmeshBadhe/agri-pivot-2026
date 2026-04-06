@@ -7,6 +7,7 @@ import { TrendingUp, TrendingDown, Tractor, Calculator, CloudSun, Leaf, Bell, Pe
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import { ModelAccuracyCard } from '../../components/ui/ModelAccuracyCard';
 
 export const Dashboard = () => {
     const { user, logout, updateProfile } = useAuth();
@@ -187,12 +188,15 @@ export const Dashboard = () => {
                                 </div>
                             </div>
 
-                            <ForecastChart data={chartData} isLoading={isChartLoading} color={color} />
+                            <ForecastChart data={chartData} isLoading={isChartLoading} color={color} cropName={selectedCrop} />
                         </motion.div>
                     </div>
 
                     {/* Right Column: Widgets */}
                     <div className="col-span-1 space-y-6">
+                        {/* Widget 0: Model Accuracy */}
+                        <ModelAccuracyCard />
+
                         {/* Widget 1: AI Signal */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}

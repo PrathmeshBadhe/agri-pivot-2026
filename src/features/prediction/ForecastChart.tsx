@@ -5,9 +5,10 @@ interface ForecastChartProps {
     data: PredictionPoint[];
     isLoading: boolean;
     color?: string;
+    cropName?: string;
 }
 
-export const ForecastChart = ({ data, isLoading, color = '#059669' }: ForecastChartProps) => {
+export const ForecastChart = ({ data, isLoading, color = '#059669', cropName = 'Onion' }: ForecastChartProps) => {
     if (isLoading) {
         return (
             <div className="h-96 w-full bg-slate-50 animate-pulse flex items-center justify-center">
@@ -40,7 +41,7 @@ export const ForecastChart = ({ data, isLoading, color = '#059669' }: ForecastCh
             <div className="flex justify-between items-center mb-4">
                 <div>
                     <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Price Forecast</h3>
-                    <p className="text-2xl font-bold text-slate-900">Onion (Pune)</p>
+                    <p className="text-2xl font-bold text-slate-900">{cropName} (Pune)</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-4 text-xs font-medium">
                     <span className="flex items-center text-emerald-600"><span className="w-2 h-2 rounded-full bg-emerald-600 mr-2"></span>History</span>
