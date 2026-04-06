@@ -28,6 +28,8 @@ export const ForecastChart = ({ data, isLoading, color = '#059669' }: ForecastCh
             ...point,
             priceHistory: point.type === 'history' || isTransition ? point.price : null,
             priceForecast: point.type === 'forecast' ? point.price : null,
+            premiumForecast: point.type === 'forecast' ? point.price_premium : null,
+            aGradeForecast: point.type === 'forecast' ? point.price_a_grade : null,
             // Create a range for confidence interval (yhat_upper - yhat_lower)
             range: point.yhat_upper && point.yhat_lower ? [point.yhat_lower, point.yhat_upper] : null
         };
@@ -40,9 +42,11 @@ export const ForecastChart = ({ data, isLoading, color = '#059669' }: ForecastCh
                     <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Price Forecast</h3>
                     <p className="text-2xl font-bold text-slate-900">Onion (Pune)</p>
                 </div>
-                <div className="flex items-center gap-4 text-xs font-medium">
+                <div className="flex flex-wrap items-center gap-4 text-xs font-medium">
                     <span className="flex items-center text-emerald-600"><span className="w-2 h-2 rounded-full bg-emerald-600 mr-2"></span>History</span>
-                    <span className="flex items-center text-indigo-600"><span className="w-2 h-2 rounded-full bg-indigo-600 mr-2"></span>AI Prediction</span>
+                    <span className="flex items-center text-indigo-600"><span className="w-2 h-2 rounded-full bg-indigo-600 mr-2"></span>Std AI</span>
+                    <span className="flex items-center text-amber-500"><span className="w-2 h-2 rounded-full bg-amber-500 mr-2"></span>A-Grade</span>
+                    <span className="flex items-center text-rose-500"><span className="w-2 h-2 rounded-full bg-rose-500 mr-2"></span>Premium</span>
                 </div>
             </div>
 
@@ -88,7 +92,7 @@ export const ForecastChart = ({ data, isLoading, color = '#059669' }: ForecastCh
                         connectNulls
                     />
 
-                    {/* Forecast Line (Dotted) */}
+                    {/* Forecast Line (Standard bulk) */}
                     <Area
                         type="monotone"
                         dataKey="priceForecast"
@@ -96,9 +100,35 @@ export const ForecastChart = ({ data, isLoading, color = '#059669' }: ForecastCh
                         strokeWidth={3}
                         strokeDasharray="5 5"
                         fill="none"
-                        name="AI Forecast"
+                        name="AI Forecast (Standard)"
                         connectNulls
                         dot={{ r: 4, fill: '#4f46e5', strokeWidth: 2, stroke: '#fff' }}
+                    />
+
+                    {/* A-Grade Line */}
+                    <Area
+                        type="monotone"
+                        dataKey="aGradeForecast"
+                        stroke="#f59e0b"
+                        strokeWidth={2}
+                        strokeDasharray="3 3"
+                        fill="none"
+                        name="AI Forecast (A-Grade)"
+                        connectNulls
+                        dot={false}
+                    />
+
+                    {/* Premium Line */}
+                    <Area
+                        type="monotone"
+                        dataKey="premiumForecast"
+                        stroke="#f43f5e"
+                        strokeWidth={2}
+                        strokeDasharray="3 3"
+                        fill="none"
+                        name="AI Forecast (Premium)"
+                        connectNulls
+                        dot={false}
                     />
                 </AreaChart>
             </ResponsiveContainer>

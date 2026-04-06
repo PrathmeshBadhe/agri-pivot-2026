@@ -1,118 +1,73 @@
-# Agri-Pivot AI 🌾
+# React + TypeScript + Vite
 
-**Smart Mandi Price Prediction & Logistics Optimization System**
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-An industry-grade agricultural dashboard featuring price forecasting, profit calculators, weather advisories, logistics tools, and real-time market insights — built for Indian farmers and traders.
+Currently, two official plugins are available:
 
----
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Tech Stack
+## React Compiler
 
-| Layer | Technologies |
-|---|---|
-| **Frontend** | React 19, TypeScript, Vite 7, Tailwind CSS, Framer Motion, Recharts, Zustand, React Router |
-| **Backend** | Python (HTTP server), SQLite |
-| **Deployment** | Vercel (frontend) |
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
----
+## Expanding the ESLint configuration
 
-## Project Structure
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-```
-agri-pivot-2026/
-├── backend/              # Python API server + SQLite database
-│   ├── main.py           # HTTP server with /api/predict endpoint
-│   ├── seed_database.py  # CSV → SQLite seeder
-│   └── sample_onion_data.csv
-├── frontend/             # Legacy React (JS) frontend
-├── frontend_ts/          # Primary React (TS) frontend ← deploy this
-│   ├── src/
-│   │   ├── features/
-│   │   │   ├── auth/         # Login + mock auth (Zustand)
-│   │   │   ├── dashboard/    # Main dashboard with charts & widgets
-│   │   │   ├── prediction/   # Price forecast chart + data hooks
-│   │   │   ├── market/       # Mandi price listings
-│   │   │   └── tools/        # Calculator, Weather, Logistics
-│   │   ├── components/ui/    # Reusable Button component
-│   │   └── lib/              # Utilities (cn helper)
-│   └── vercel.json           # SPA rewrite rules
-```
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
----
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-## Features
-
-- **Price Forecasting** — 30-day historical + 14-day AI prediction with confidence intervals
-- **AI Trade Signal** — BUY / SELL / HOLD recommendations per crop
-- **Profit Calculator** — Transport costs, labor, margins with animated receipt
-- **Weather Advisory** — Agricultural alerts with disease risk warnings
-- **Logistics Hub** — Transporter discovery with load pooling discounts
-- **Market Pulse** — Live mandi prices across commodities
-- **Auth System** — Role-based login (Farmer / Trader) with persistent sessions
-
----
-
-## Quick Start
-
-### Prerequisites
-
-- **Node.js** ≥ 20.19 (required by Vite 7)
-- **Python** 3.10+ (for backend, optional)
-
-### Frontend (Primary)
-
-```bash
-cd frontend_ts
-npm install
-npm run dev
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-Open **http://localhost:5173** and login with:
-- **Email:** `farmer@agri.com`
-- **Password:** `demo`
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-### Backend (Optional)
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-The frontend runs standalone with mock data. To use the backend API:
-
-```bash
-cd backend
-pip install -r requirements.txt
-python seed_database.py    # Seed SQLite from CSV
-python main.py             # Starts on http://localhost:8000
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
-
----
-
-## Deploy to Vercel
-
-1. Push to GitHub
-2. Import project in [Vercel](https://vercel.com)
-3. Set **Production Branch** to `dev` (Settings → Git → Production Branch)
-4. Set **Root Directory** to `frontend_ts`
-5. Framework preset: **Vite** (auto-detected)
-6. Deploy
-
-The `vercel.json` SPA rewrite is already configured.
-
----
-
-## Demo Credentials
-
-| Field | Value |
-|---|---|
-| Email | `farmer@agri.com` |
-| Password | `demo` |
-
----
-
-## Pages
-
-| Route | Page | Description |
-|---|---|---|
-| `/login` | Login | Role toggle (Farmer/Trader), email/password auth |
-| `/` | Dashboard | Forecast chart, AI signal, market pulse, quick actions |
-| `/calculator` | Profit Calculator | Revenue, transport, labor cost engine |
-| `/weather` | Weather | 5-day forecast + agri-advisory alerts |
-| `/markets` | Markets | Commodity prices across mandis |
-| `/logistics` | Logistics | Transporter listings with pooling |
