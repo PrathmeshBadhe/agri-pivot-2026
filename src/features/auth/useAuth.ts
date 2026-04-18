@@ -34,11 +34,17 @@ export const useAuth = create<AuthState>((set) => {
             if (firebaseUser) {
                 // If we had stored the profile info like name/role, we could fetch it from firestore here
                 const userRole = localStorage.getItem(`role_${firebaseUser.uid}`) as 'farmer' | 'trader' || 'farmer';
+                const loginName = firebaseUser.email?.split('@')[0] || 'User';
+                const calculatedName = firebaseUser.displayName || localStorage.getItem(`name_${firebaseUser.uid}`) || loginName;
+                
+                // Force sync the name local storage so TraderNetworkPage can read their "login name"
+                localStorage.setItem(`name_${firebaseUser.uid}`, calculatedName);
+
                 set({ 
                     user: { 
                         id: firebaseUser.uid, 
                         email: firebaseUser.email || '', 
-                        full_name: firebaseUser.displayName || localStorage.getItem(`name_${firebaseUser.uid}`) || firebaseUser.email?.split('@')[0] || 'User',
+                        full_name: calculatedName,
                         role: userRole
                     }, 
                     isLoading: false 

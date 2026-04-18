@@ -82,7 +82,7 @@ export const TraderNetworkPage = () => {
             if (key && key.startsWith('role_')) {
                 const uid = key.replace('role_', '');
                 if (localStorage.getItem(key) === 'farmer') {
-                    const name = localStorage.getItem(`name_${uid}`) || 'Registered Farmer';
+                    const name = localStorage.getItem(`name_${uid}`) || 'Farmer (Login Name)';
                     dynamicFarmers.push({
                         id: uid,
                         name: name,
