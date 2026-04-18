@@ -2,16 +2,23 @@ import { useState, type FormEvent } from 'react';
 import { useAuth } from './useAuth';
 import { Button } from '../../components/ui/Button';
 import { Sprout, Tractor } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const LoginPage = () => {
     const [role, setRole] = useState<'farmer' | 'trader'>('farmer');
     const [email, setEmail] = useState('farmer@agri.com');
     const [password, setPassword] = useState('demo');
-    const { login, isLoading } = useAuth();
+    const [isRegister, setIsRegister] = useState(false);
+    const [name, setName] = useState('');
+    const { login, register, isLoading } = useAuth();
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        await login(email, password);
+        if (isRegister) {
+            await register(email, password, name);
+        } else {
+            await login(email, password);
+        }
     };
 
     return (
@@ -31,8 +38,17 @@ export const LoginPage = () => {
             <div className="flex-1 flex items-center justify-center bg-slate-50 p-8">
                 <div className="w-full max-w-md space-y-8">
                     <div className="text-center lg:text-left">
-                        <h2 className="text-3xl font-bold text-slate-900">Welcome back</h2>
-                        <p className="mt-2 text-slate-600">Sign in to your dashboard</p>
+                        <motion.h2 
+                            key={isRegister ? 'reg' : 'login'}
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-3xl font-bold text-slate-900"
+                        >
+                            {isRegister ? 'Create an Account' : 'Welcome back'}
+                        </motion.h2>
+                        <p className="mt-2 text-slate-600">
+                            {isRegister ? 'Join Agri-Pivot AI today' : 'Sign in to your dashboard'}
+                        </p>
                     </div>
 
                     {/* Role Toggle */}
@@ -56,6 +72,25 @@ export const LoginPage = () => {
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        <AnimatePresence>
+                            {isRegister && (
+                                <motion.div
+                                    initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                                    animate={{ opacity: 1, height: 'auto', marginBottom: 24 }}
+                                    exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                                    className="overflow-hidden"
+                                >
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
+                                    <input
+                                        type="text"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all bg-white"
+                                        required
+                                    />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-2">Email address</label>
                             <input
@@ -83,11 +118,11 @@ export const LoginPage = () => {
                             size="lg"
                             isLoading={isLoading}
                         >
-                            Sign In to Dashboard
+                            {isRegister ? 'Create Account' : 'Sign In to Dashboard'}
                         </Button>
 
-                        <p className="text-xs text-center text-slate-500 mt-4">
-                            Strict Adherence Mode: Mock Auth enabled. <br /> Use <b>farmer@agri.com</b> / <b>demo</b>
+                        <p className="text-sm text-center text-slate-500 mt-4 cursor-pointer hover:text-emerald-600 transition-colors" onClick={() => setIsRegister(!isRegister)}>
+                            {isRegister ? 'Already have an account? Sign In' : 'No account? Register here'}
                         </p>
                     </form>
                 </div>

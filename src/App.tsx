@@ -8,6 +8,7 @@ import { CalculatorPage } from './features/tools/CalculatorPage';
 import { WeatherPage } from './features/tools/WeatherPage';
 import { MarketPage } from './features/market/MarketPage';
 import { LogisticsPage } from './features/tools/LogisticsPage';
+import { ShopPage } from './features/shop/ShopPage';
 import { BottomNav } from './components/ui/BottomNav';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/weather"    element={user  ? <WeatherPage />    : <Navigate to="/login" />} />
                 <Route path="/markets"    element={user  ? <MarketPage />     : <Navigate to="/login" />} />
                 <Route path="/logistics"  element={user  ? <LogisticsPage />  : <Navigate to="/login" />} />
+                <Route path="/shop"       element={user  ? <ShopPage />       : <Navigate to="/login" />} />
             </Routes>
             {/* Bottom nav — only visible on mobile (md:hidden inside component) */}
             {user && <BottomNav />}

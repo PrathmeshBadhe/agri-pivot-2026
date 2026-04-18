@@ -22,7 +22,9 @@
 | **Logistics Hub** | Transporter listings with load-pooling discounts |
 | **Weather Advisory** | 5-day forecast with disease risk alerts |
 | **Market Pulse** | Live mandi prices across Maharashtra mandis |
-| **Auth System** | Role-based login (Farmer / Trader) with persistent sessions |
+| **AgriMarket Direct** | App marketplace with e-commerce cart UI |
+| **Razorpay Payments** | Real payment gateway integrated checkout flow |
+| **Auth System** | Full Firebase Authentication with Role-based states |
 
 ---
 
@@ -31,7 +33,8 @@
 | Layer | Technology |
 |---|---|
 | **Frontend** | React 19, TypeScript, Vite 7, Tailwind CSS, Framer Motion, Recharts, Zustand |
-| **Backend** | Python (Flask), Vercel Serverless Functions |
+| **Backend** | Python (Flask), Vercel Serverless Functions, Razorpay SDK |
+| **Auth & DB**| Firebase App/Auth SDK |
 | **ML Model** | scikit-learn RandomForestRegressor, joblib |
 | **Deployment** | Vercel (frontend + serverless API, zero-config) |
 
@@ -79,11 +82,14 @@ agri-pivot-2026/
 │
 ├── src/                    # React TypeScript frontend
 │   ├── features/
-│   │   ├── auth/           # Login + role-based auth (Zustand)
+│   │   ├── auth/           # Firebase powered login/registration
 │   │   ├── dashboard/      # Main dashboard (chart, signal, accuracy card)
 │   │   ├── prediction/     # ForecastChart, usePrediction hook
 │   │   ├── market/         # Mandi price listings
-│   │   └── tools/          # Calculator, Weather, Logistics pages
+│   │   ├── tools/          # Calculator, Weather, Logistics pages
+│   │   └── shop/           # Direct Buy Marketplace & Razorpay checkout
+│   ├── lib/
+│   │   └── firebase.ts     # Firebase initialization singleton
 │   └── components/ui/
 │       ├── Button.tsx
 │       └── ModelAccuracyCard.tsx   # AI accuracy gauge widget
@@ -108,9 +114,7 @@ agri-pivot-2026/
 npm install
 npm run dev
 ```
-Open **http://localhost:5173** and log in with:
-- Email: `farmer@agri.com`
-- Password: `demo`
+Open **http://localhost:5173** and click **"No account? Register here"** to create a fresh Firebase test user.
 
 ### Backend (local dev)
 
@@ -143,12 +147,12 @@ The existing `vercel.json` handles SPA routing automatically.
 
 ---
 
-## Demo Credentials
+## User Authentication (Firebase)
 
-| Field | Value |
-|---|---|
-| Email | `farmer@agri.com` |
-| Password | `demo` |
+The project uses Firebase Authentication. To test the app:
+1. Start the React server.
+2. Use the "Register here" tab on the Login page to generate a new account dynamically.
+3. (Ensure you have a `.env.local` set up with your valid Firebase keys if developing locally).
 
 ---
 

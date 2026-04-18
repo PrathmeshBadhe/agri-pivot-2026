@@ -4,9 +4,13 @@ from datetime import datetime, timedelta
 import joblib
 import pandas as pd
 import os
+import razorpay
+import uuid
 
 app = Flask(__name__)
 CORS(app)
+
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_Sf36eThBTQxONp')
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model.pkl')
 
@@ -146,6 +150,33 @@ def predict():
 
     return jsonify(history + results)
 
+
+@app.route('/api/payment/create-order', methods=['POST'])
+def create_payment_order():
+    data = request.json
+    amount = data.get('amount', 0)
+    order_amount = int(amount * 100) # Amount in paise
+
+    secret = os.environ.get('RAZORPAY_KEY_SECRET')
+    
+    if secret:
+        try:
+            rzp_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, secret))
+            order = rzp_client.order.create(dict(amount=order_amount, currency='INR', payment_capture=1))
+            return jsonify({
+                'order_id': order['id'],
+                'amount': order['amount'],
+                'key_id': RAZORPAY_KEY_ID
+            })
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    else:
+        # Fallback for testing when secret is not provided
+        return jsonify({
+            'order_id': None, 
+            'amount': order_amount,
+            'key_id': RAZORPAY_KEY_ID
+        })
 
 @app.route('/api/metrics', methods=['GET'])
 def metrics():

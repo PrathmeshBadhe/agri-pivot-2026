@@ -1,12 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, TrendingUp, Calculator, Truck, CloudSun } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, Calculator, Truck, CloudSun, ShoppingCart } from 'lucide-react';
 
 const NAV_ITEMS = [
     { to: '/',           icon: LayoutDashboard, label: 'Home'       },
+    { to: '/shop',       icon: ShoppingCart,    label: 'Buy'        },
     { to: '/markets',    icon: TrendingUp,      label: 'Mandi'      },
     { to: '/calculator', icon: Calculator,      label: 'Profit'     },
     { to: '/logistics',  icon: Truck,           label: 'Transport'  },
-    { to: '/weather',    icon: CloudSun,        label: 'Weather'    },
 ];
 
 export const BottomNav = () => {
