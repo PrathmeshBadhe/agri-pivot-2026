@@ -3,7 +3,7 @@ import { useAuth } from '../auth/useAuth';
 import { Button } from '../../components/ui/Button';
 import { ForecastChart } from '../prediction/ForecastChart';
 import { usePrediction } from '../prediction/usePrediction';
-import { TrendingUp, TrendingDown, Tractor, Calculator, CloudSun, Leaf, Bell, Pencil, Check, Coins, ShoppingCart } from 'lucide-react';
+import { TrendingUp, TrendingDown, Tractor, Calculator, CloudSun, Bell, Pencil, Check, Coins, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';

@@ -87,7 +87,7 @@ export const ShopPage = () => {
                 description: 'Direct Buy Checkout',
                 // order_id is dynamically skipped if null for test keys
                 ...(data.order_id ? { order_id: data.order_id } : {}),
-                handler: function (response: any) {
+                handler: function () {
                     setIsScannerOpen(true);
                     setPaymentStatus('success');
                     setTimeout(() => {

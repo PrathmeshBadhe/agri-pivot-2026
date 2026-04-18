@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, TrendingUp, Calculator, Truck, CloudSun, ShoppingCart } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, Calculator, Truck, ShoppingCart } from 'lucide-react';
 
 const NAV_ITEMS = [
     { to: '/',           icon: LayoutDashboard, label: 'Home'       },

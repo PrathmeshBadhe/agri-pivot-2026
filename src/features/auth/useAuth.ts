@@ -65,7 +65,7 @@ export const useAuth = create<AuthState>((set) => {
             }
         },
 
-        register: async (email, password, name) => {
+        register: async (email, password, _name) => {
             set({ isLoading: true });
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
