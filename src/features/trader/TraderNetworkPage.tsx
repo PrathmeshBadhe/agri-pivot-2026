@@ -51,7 +51,7 @@ const FARMERS_DB = [
 
 export const TraderNetworkPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedFarmer, setSelectedFarmer] = useState<typeof FARMERS_DB[0] | null>(null);
+    const [selectedFarmer, setSelectedFarmer] = useState<any | null>(null);
     const [cart, setCart] = useState<{product: any, quantity: number}[]>([]);
     
     // GPay Checkout State
@@ -59,13 +59,41 @@ export const TraderNetworkPage = () => {
     const [paymentStep, setPaymentStep] = useState<'scan' | 'verifying' | 'success'>('scan');
     const [activeScannerImg, setActiveScannerImg] = useState<string | null>(null);
 
+    // Merge mock database with real farmers stored locally
+    const farmersDatabase = useMemo(() => {
+        const dynamicFarmers: any[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('role_')) {
+                const uid = key.replace('role_', '');
+                if (localStorage.getItem(key) === 'farmer') {
+                    const name = localStorage.getItem(`name_${uid}`) || 'Registered Farmer';
+                    dynamicFarmers.push({
+                        id: uid,
+                        name: name,
+                        farm: `${name.split(' ')[0]}'s Verified Farm`,
+                        location: 'Digital Network',
+                        distance: 'Live',
+                        rating: 5.0,
+                        reviews: 1,
+                        products: [
+                            { id: `p_${uid}_1`, name: 'Fresh Tomatoes', category: 'Vegetables', price: 30, unit: 'kg', emoji: '🍅' },
+                            { id: `p_${uid}_2`, name: 'Nashik Onions', category: 'Vegetables', price: 20, unit: 'kg', emoji: '🧅' }
+                        ]
+                    });
+                }
+            }
+        }
+        return [...dynamicFarmers, ...FARMERS_DB];
+    }, []);
+
     const filteredFarmers = useMemo(() => {
-        return FARMERS_DB.filter(f => 
+        return farmersDatabase.filter(f => 
             f.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
             f.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            f.products.some(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+            f.products.some((p: any) => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
         );
-    }, [searchQuery]);
+    }, [searchQuery, farmersDatabase]);
 
     const addToCart = (product: any) => {
         setCart(prev => {
