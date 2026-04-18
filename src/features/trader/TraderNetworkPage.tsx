@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MapPin, Star, ChevronLeft, ShoppingCart, Plus, Minus, X, ScanLine } from 'lucide-react';
+import { Search, MapPin, Star, ChevronLeft, ShoppingCart, Plus, Minus, X, ScanLine, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import toast from 'react-hot-toast';
