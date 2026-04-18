@@ -202,7 +202,7 @@ export const TraderNetworkPage = () => {
                                     <div>
                                         <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-2">Available Now</p>
                                         <div className="flex flex-wrap gap-2">
-                                            {farmer.products.map(p => (
+                                            {farmer.products.map((p: any) => (
                                                 <span key={p.id} className="text-xs bg-white border border-slate-200 px-3 py-1.5 rounded-full text-slate-600 font-medium shadow-sm">
                                                     {p.emoji} {p.name}
                                                 </span>
@@ -236,7 +236,7 @@ export const TraderNetworkPage = () => {
                             <div className="col-span-1 lg:col-span-2">
                                 <h3 className="text-xl font-bold text-slate-800 mb-4">Fresh Produce</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {selectedFarmer.products.map(product => (
+                                    {selectedFarmer.products.map((product: any) => (
                                         <div key={product.id} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-4 hover:border-emerald-200 transition-colors">
                                             <div className="w-16 h-16 bg-slate-50 rounded-xl flex items-center justify-center text-3xl shrink-0">
                                                 {product.emoji}
