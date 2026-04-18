@@ -17,8 +17,8 @@ interface User {
 interface AuthState {
     user: User | null;
     isLoading: boolean;
-    login: (email: string, password: string) => Promise<void>;
-    register: (email: string, password: string, name?: string) => Promise<void>;
+    login: (email: string, password: string, role: string) => Promise<void>;
+    register: (email: string, password: string, name: string, role: string) => Promise<void>;
     logout: () => Promise<void>;
     updateProfile: (name: string) => void;
 }
@@ -33,12 +33,13 @@ export const useAuth = create<AuthState>((set) => {
         onAuthStateChanged(auth, (firebaseUser) => {
             if (firebaseUser) {
                 // If we had stored the profile info like name/role, we could fetch it from firestore here
+                const userRole = localStorage.getItem(`role_${firebaseUser.uid}`) as 'farmer' | 'trader' || 'farmer';
                 set({ 
                     user: { 
                         id: firebaseUser.uid, 
                         email: firebaseUser.email || '', 
-                        full_name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-                        role: 'farmer'
+                        full_name: firebaseUser.displayName || localStorage.getItem(`name_${firebaseUser.uid}`) || firebaseUser.email?.split('@')[0] || 'User',
+                        role: userRole
                     }, 
                     isLoading: false 
                 });
@@ -52,10 +53,11 @@ export const useAuth = create<AuthState>((set) => {
         user: null, // Initially null, will be updated by onAuthStateChanged
         isLoading: true, // Start loading until Firebase responds
         
-        login: async (email, password) => {
+        login: async (email, password, role) => {
             set({ isLoading: true });
             try {
-                await signInWithEmailAndPassword(auth, email, password);
+                const creds = await signInWithEmailAndPassword(auth, email, password);
+                localStorage.setItem(`role_${creds.user.uid}`, role);
                 // State updates via onAuthStateChanged
             } catch (error: any) {
                 console.error('Login failed:', error);
@@ -65,11 +67,12 @@ export const useAuth = create<AuthState>((set) => {
             }
         },
 
-        register: async (email, password, _name) => {
+        register: async (email, password, name, role) => {
             set({ isLoading: true });
             try {
-                await createUserWithEmailAndPassword(auth, email, password);
-                // Ideally, you update the firebase profile here with the name.
+                const creds = await createUserWithEmailAndPassword(auth, email, password);
+                localStorage.setItem(`role_${creds.user.uid}`, role);
+                localStorage.setItem(`name_${creds.user.uid}`, name);
                 // State updates via onAuthStateChanged
             } catch (error: any) {
                 console.error('Registration failed:', error);

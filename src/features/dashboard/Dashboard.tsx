@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { ModelAccuracyCard } from '../../components/ui/ModelAccuracyCard';
+import { UploadScannerModal } from './UploadScannerModal';
 
 export const Dashboard = () => {
     const { user, logout, updateProfile } = useAuth();
@@ -16,6 +17,7 @@ export const Dashboard = () => {
 
     // Profile Editing State
     const [isEditing, setIsEditing] = useState(false);
+    const [isUploadScannerOpen, setIsUploadScannerOpen] = useState(false);
     const [tempName, setTempName] = useState(user?.full_name || '');
 
     // Sync temp name when user loads
@@ -83,6 +85,13 @@ export const Dashboard = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {user?.role === 'farmer' && (
+                            <Button variant="outline" size="sm" onClick={() => setIsUploadScannerOpen(true)} className="hidden md:flex ml-2 border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100">
+                                Upload GPay QR
+                            </Button>
+                        )}
+
                         <Button variant="ghost" size="sm" onClick={logout} className="text-red-500 hover:bg-red-50 hover:text-red-600">
                             Log out
                         </Button>
@@ -145,20 +154,37 @@ export const Dashboard = () => {
                             </motion.div>
                         </Link>
 
-                        <Link to="/shop" className="contents">
-                            <motion.div
-                                whileHover={{ scale: 1.03 }}
-                                whileTap={{ scale: 0.96 }}
-                                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                                className="relative h-28 w-full flex items-center px-6 gap-4 bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl overflow-hidden group hover:bg-white/80 transition-colors cursor-pointer"
-                            >
-                                <div className="p-3.5 rounded-2xl bg-amber-100 text-amber-600 group-hover:scale-110 transition-transform duration-300 shadow-sm">
-                                    <ShoppingCart className="w-7 h-7" />
-                                </div>
-                                <span className="text-lg font-bold text-slate-800 tracking-tight text-left leading-tight">Agri<br />Market</span>
-                                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl" />
-                            </motion.div>
-                        </Link>
+                        {user?.role === 'trader' ? (
+                            <Link to="/trader/network" className="contents">
+                                <motion.div
+                                    whileHover={{ scale: 1.03 }}
+                                    whileTap={{ scale: 0.96 }}
+                                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                    className="relative h-28 w-full flex items-center px-6 gap-4 bg-emerald-600/90 backdrop-blur-xl border border-emerald-500/20 shadow-[0_8px_30px_rgb(5,150,105,0.3)] rounded-3xl overflow-hidden group hover:bg-emerald-600 transition-colors cursor-pointer"
+                                >
+                                    <div className="p-3.5 rounded-2xl bg-white/20 text-white group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                                        <TrendingUp className="w-7 h-7" />
+                                    </div>
+                                    <span className="text-lg font-bold text-white tracking-tight text-left leading-tight">Farmer<br />Network</span>
+                                    <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
+                                </motion.div>
+                            </Link>
+                        ) : (
+                            <Link to="/shop" className="contents">
+                                <motion.div
+                                    whileHover={{ scale: 1.03 }}
+                                    whileTap={{ scale: 0.96 }}
+                                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                    className="relative h-28 w-full flex items-center px-6 gap-4 bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl overflow-hidden group hover:bg-white/80 transition-colors cursor-pointer"
+                                >
+                                    <div className="p-3.5 rounded-2xl bg-amber-100 text-amber-600 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                                        <ShoppingCart className="w-7 h-7" />
+                                    </div>
+                                    <span className="text-lg font-bold text-slate-800 tracking-tight text-left leading-tight">Agri<br />Market</span>
+                                    <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl" />
+                                </motion.div>
+                            </Link>
+                        )}
                     </div>
                 </div>
 
@@ -313,6 +339,7 @@ export const Dashboard = () => {
                     </div>
                 </div>
             </main>
+            <UploadScannerModal isOpen={isUploadScannerOpen} onClose={() => setIsUploadScannerOpen(false)} />
         </div>
     );
 };

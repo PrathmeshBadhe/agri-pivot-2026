@@ -15,9 +15,9 @@ export const LoginPage = () => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (isRegister) {
-            await register(email, password, name);
+            await register(email, password, name, role);
         } else {
-            await login(email, password);
+            await login(email, password, role);
         }
     };
 
