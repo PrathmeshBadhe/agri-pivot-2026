@@ -46,6 +46,21 @@ const FARMERS_DB = [
             { id: 'p6', name: 'Alphonso Mangoes', category: 'Fruits', price: 650, unit: 'dozen', emoji: '🥭' },
             { id: 'p7', name: 'Sweet Corn', category: 'Vegetables', price: 40, unit: 'kg', emoji: '🌽' }
         ]
+    },
+    {
+        id: 'mock-farmer-4',
+        name: 'Prakash Vegetables',
+        farm: 'APMC Market Hub',
+        location: 'Nashik, MH',
+        distance: '8 km away',
+        rating: 4.6,
+        reviews: 312,
+        products: [
+            { id: 'p8', name: 'Fresh Onion', category: 'Vegetables', price: 13, unit: 'kg', emoji: '🧅' },
+            { id: 'p9', name: 'Fresh Tomato', category: 'Vegetables', price: 20, unit: 'kg', emoji: '🍅' },
+            { id: 'p10', name: 'Fresh Potato', category: 'Vegetables', price: 10, unit: 'kg', emoji: '🥔' },
+            { id: 'p11', name: 'Garlic (Premium)', category: 'Vegetables', price: 120, unit: 'kg', emoji: '🧄' }
+        ]
     }
 ];
 
