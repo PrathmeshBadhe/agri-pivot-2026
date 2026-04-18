@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { auth } from '../../lib/firebase';
-import { 
+import {
     signInWithEmailAndPassword, 
     createUserWithEmailAndPassword,
     signOut as firebaseSignOut, 
-    onAuthStateChanged 
+    onAuthStateChanged,
+    updateProfile as firebaseUpdateProfile
 } from 'firebase/auth';
 
 interface User {
@@ -77,8 +78,19 @@ export const useAuth = create<AuthState>((set) => {
             set({ isLoading: true });
             try {
                 const creds = await createUserWithEmailAndPassword(auth, email, password);
+                
+                // Physically save the typed name to their live Firebase account!
+                if (auth.currentUser) {
+                    await firebaseUpdateProfile(auth.currentUser, { displayName: name });
+                }
+
                 localStorage.setItem(`role_${creds.user.uid}`, role);
                 localStorage.setItem(`name_${creds.user.uid}`, name);
+                
+                // Immediately patchzustand state so the UI snaps to the exact typed name instantly
+                set(state => ({
+                    user: state.user ? { ...state.user, full_name: name, role: role as any } : null
+                }));
                 // State updates via onAuthStateChanged
             } catch (error: any) {
                 console.error('Registration failed:', error);
